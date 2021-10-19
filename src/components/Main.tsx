@@ -13,9 +13,9 @@ function Main() {
     history.push("/callback")
   }
   return (
-    <div>
-      <header>header</header>
-      <div>
+    <div className="h-screen flex flex-col">
+      <header className=" border-b border-gray-600 h-14 p-2">header</header>
+      <div className="flex-grow">
         {isLogin ? name : "not login"}
         <button onClick={login}>login</button>
         <button onClick={()=>dispatch(logoutUser())}>logout</button>

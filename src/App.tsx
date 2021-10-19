@@ -14,17 +14,20 @@ function App() {
     dispatch(initUser())
   },[dispatch])
   return (
-    <BrowserRouter>
+    <div className="bg-gray-900 text-white">
 
-      <Switch>
+      <BrowserRouter>
 
-        <Route exact path="/" component={Main} />
-        <Route exact path="/callback" component={SpotifyCallback} />
-        <Route component={RedirectRoot}/>
+        <Switch>
 
-      </Switch>
+          <Route exact path="/" component={Main} />
+          <Route exact path="/callback" component={SpotifyCallback} />
+          <Route component={RedirectRoot}/>
 
-    </BrowserRouter>
+        </Switch>
+
+      </BrowserRouter>
+    </div>
   );
 }
 
