@@ -51,4 +51,4 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Action Creatorsをエクスポートする
-export const { login, logout } = slice.actions;
+export const { init, login, logout } = slice.actions;
