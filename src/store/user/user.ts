@@ -23,13 +23,13 @@ const slice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    init: () => {
+    initUser: () => {
       const userState = localStorage.getItem(LOCALSTORAGE_KEY_USER)
       if(userState == null) return initialState
       const json = JSON.parse(userState)
       return json
     },
-    login: (state, action) => {
+    loginUser: (state, action) => {
       const res = {
         name: 'test',
         accessToken:"aaaa",
@@ -39,7 +39,7 @@ const slice = createSlice({
       localStorage.setItem(LOCALSTORAGE_KEY_USER,JSON.stringify(res))
       return res
     },
-    logout: () => {
+    logoutUser: () => {
       localStorage.removeItem(LOCALSTORAGE_KEY_USER)
       return initialState
     },
@@ -51,4 +51,4 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Action Creatorsをエクスポートする
-export const { init, login, logout } = slice.actions;
+export const { initUser, loginUser, logoutUser } = slice.actions;

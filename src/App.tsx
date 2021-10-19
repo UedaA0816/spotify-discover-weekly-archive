@@ -1,23 +1,30 @@
 import React,{useEffect} from 'react';
 import { useDispatch } from 'react-redux';
-import { useSelector } from './store/';
-import { init,login,logout } from './store/user/user'
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+
+import { initUser } from './store/user/user'
+
+import Main from './components/Main';
+import SpotifyCallback from './components/SpotifyCallback';
+import RedirectRoot from './components/RedirectRoot';
 
 function App() {
   const dispatch = useDispatch()
-  const {isLogin, name}  = useSelector(state => state.user);
   useEffect(()=>{
-    dispatch(init())
+    dispatch(initUser())
   },[dispatch])
   return (
-    <div>
-      <header>header</header>
-      <div>
-        {isLogin ? name : "not login"}
-        <button onClick={()=>dispatch(login({}))}>login</button>
-        <button onClick={()=>dispatch(logout())}>logout</button>
-      </div>
-    </div>
+    <BrowserRouter>
+
+      <Switch>
+
+        <Route exact path="/" component={Main} />
+        <Route exact path="/callback" component={SpotifyCallback} />
+        <Route component={RedirectRoot}/>
+
+      </Switch>
+
+    </BrowserRouter>
   );
 }
 
