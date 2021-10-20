@@ -1,15 +1,21 @@
 import { useDispatch } from "react-redux";
-import { useHistory, useLocation } from "react-router";
+import { useHistory } from "react-router";
 import { useSelector } from "../store";
+
 import { loginUser, logoutUser } from "../store/user/user";
+import { requestAuthorization } from "../spotifyapi";
+
 import Subbutton from "./SubButton";
+
 
 function Header(){
   const dispatch = useDispatch()
   const {isLogin,name}  = useSelector(state => state.user);
   const history = useHistory()
   const login = () => {
-    history.push("/authorize")
+    const {redirectUrl:uri,state} = requestAuthorization()
+    console.log(uri)
+    window.location.assign(uri)
   }
   const logout = () => {
     dispatch(logoutUser())
