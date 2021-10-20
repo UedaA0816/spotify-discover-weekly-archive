@@ -1,7 +1,18 @@
+import { useDispatch } from "react-redux";
+import { useHistory, useLocation } from "react-router";
 import { useSelector } from "../store";
+import { loginUser, logoutUser } from "../store/user/user";
+import Subbutton from "./SubButton";
 
 function Header(){
+  const dispatch = useDispatch()
   const {isLogin,name}  = useSelector(state => state.user);
+  const history = useHistory()
+  const login = () => {
+  }
+  const logout = () => {
+    dispatch(logoutUser())
+  }
   return(
     <header className=" flex items-center border-b border-gray-600 h-14 p-2">
       <div className="flex-grow text-lg font-bold whitespace-nowrap overflow-scroll">
@@ -9,7 +20,7 @@ function Header(){
         {isLogin && <span className="ml-4">ID:{name}</span>}
       </div>
       <div className="flex-shrink-0">
-        { isLogin ? <>logout</> : <>login</>}
+        { isLogin ? <Subbutton onClick={logout}>LOG OUT</Subbutton> : <Subbutton onClick={login}>LOG IN</Subbutton>}
       </div>
     </header>
   )
