@@ -15,7 +15,7 @@ function SpotifyCallback(){
   useEffect(()=>{
     sleep(5000).then(()=>{
       setIsLoading(false)
-      dispatch(loginUser({}))
+      dispatch(loginUser({code:""}))
     })
     
     return ()=>{

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { CaseReducer, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
 type User = {
@@ -7,6 +7,7 @@ type User = {
   refreshToken:null|string,
   isLogin:boolean
 }
+const LOCALSTORAGE_KEY_USER = "user"
 
 // Stateの初期状態
 const initialState:User = {
@@ -15,35 +16,35 @@ const initialState:User = {
   refreshToken:null,
   isLogin:false
 };
-
-const LOCALSTORAGE_KEY_USER = "user"
+const init: CaseReducer<User, PayloadAction> = (state, action) => {
+  const userState = localStorage.getItem(LOCALSTORAGE_KEY_USER)
+  if(userState == null) return initialState
+  const json = JSON.parse(userState)
+  return json
+}
+const login: CaseReducer<User, PayloadAction<{code:string}>> = (state, action) => {
+  const res = {
+    name: 'test',
+    accessToken:"aaaa",
+    refreshToken:"bbbb",
+    isLogin:true
+  }
+  localStorage.setItem(LOCALSTORAGE_KEY_USER,JSON.stringify(res))
+  return res
+}
+const logout: CaseReducer<User, PayloadAction> = (state, action) => {
+  localStorage.removeItem(LOCALSTORAGE_KEY_USER)
+  return initialState
+}
 
 // Sliceを生成する
 const slice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    initUser: () => {
-      const userState = localStorage.getItem(LOCALSTORAGE_KEY_USER)
-      if(userState == null) return initialState
-      const json = JSON.parse(userState)
-      return json
-    },
-    loginUser: (state, action) => {
-      const res = {
-        name: 'test',
-        accessToken:"aaaa",
-        refreshToken:"bbbb",
-        isLogin:true
-      }
-      localStorage.setItem(LOCALSTORAGE_KEY_USER,JSON.stringify(res))
-      return res
-    },
-    logoutUser: () => {
-      localStorage.removeItem(LOCALSTORAGE_KEY_USER)
-      return initialState
-    },
-    // etc...
+    init,
+    login,
+    logout,
   }
 });
 
@@ -51,4 +52,4 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Action Creatorsをエクスポートする
-export const { initUser, loginUser, logoutUser } = slice.actions;
+export const { init:initUser, login:loginUser, logout:logoutUser } = slice.actions;
