@@ -14,6 +14,14 @@ const generateRandomString = function(length:number) {
   return text;
 };
 
+const parseSearchParams = (searchParams:string) => {
+  const querys = querystring.parse(searchParams)
+  // console.log(querys)
+  return querys
+}
+
+export const parseRedirectSearchParams = (searchParams:string):{code:string,state:string} => parseSearchParams(searchParams) as any
+
 export const requestAuthorization = () => {
   const scopes = ['user-read-private', 'user-read-email'],
         state = generateRandomString(16);
