@@ -1,5 +1,4 @@
 import React from "react";
-import { useSelector } from "../store";
 
 const Subbutton:React.FC<{onClick:()=>void}> = ({children,onClick})=>{
   
