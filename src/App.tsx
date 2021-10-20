@@ -14,7 +14,7 @@ function App() {
     dispatch(initUser())
   },[dispatch])
   return (
-    <div className="bg-gray-900 text-white">
+    <div className="bg-gray-900 text-white h-screen">
 
       <BrowserRouter>
 
