@@ -21,7 +21,7 @@ function App() {
         <Switch>
 
           <Route exact path="/" component={Main} />
-          <Route exact path="/callback" component={SpotifyCallback} />
+          <Route exact path="/authorize" component={SpotifyCallback} />
           <Route component={RedirectRoot}/>
 
         </Switch>

@@ -9,6 +9,7 @@ function Header(){
   const {isLogin,name}  = useSelector(state => state.user);
   const history = useHistory()
   const login = () => {
+    history.push("/authorize")
   }
   const logout = () => {
     dispatch(logoutUser())
