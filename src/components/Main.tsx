@@ -1,11 +1,9 @@
-import React,{useState,useEffect} from 'react';
+import React from 'react';
 import { useSelector } from '../store/';
-import { useDispatch } from 'react-redux';
-import { BrowserRouter, Redirect, Route, Switch, useHistory } from "react-router-dom";
-
-import { initUser,loginUser,logoutUser } from '../store/user/user'
 
 import Header from './Header';
+import Home from './Home';
+import Welcome from './Welcome';
 
 function Main() {
   
@@ -15,7 +13,7 @@ function Main() {
     <div className="h-screen flex flex-col">
       <Header />
       <div className="flex-grow p-8">
-        {isLogin ? <></> : <></>}
+        {isLogin ? <Welcome /> : <Home/>}
       </div>
     </div>
   );
