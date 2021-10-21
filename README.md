@@ -1,3 +1,15 @@
+SpotifyのDiscoverWeeklyプレイリストをプレイリストとして保存するアプリです。
+
+## 環境変数
+
+```
+REACT_APP_SPOTIFY_API_CLIENT_ID=<YOUR_CLIENT_ID>
+REACT_APP_SPOTIFY_API_CLIENT_SECRET=<YOUR_CLIENT_SECRET>
+REACT_APP_SPOTIFY_API_REDIRECT_URI=http://localhost:3000/spotify-discover-weekly-archive/authorize
+```
+
+***
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
 ## Available Scripts
