@@ -2,7 +2,7 @@
   "name": "spotify-discover-weekly-archive",
   "version": "0.1.0",
   "private": true,
-  "homepage": "",
+  "homepage": "https://uedaa0816.github.io/spotify-discover-weekly-archive/",
   "dependencies": {
     "@craco/craco": "^6.3.0",
     "@reduxjs/toolkit": "^1.5.1",
