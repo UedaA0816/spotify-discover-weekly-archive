@@ -1,5 +1,6 @@
 import axios from 'axios';
 import querystring from 'querystring'
+import { SpotifyUserProfile } from './type/spotify/user';
 
 const clientId = process.env.REACT_APP_SPOTIFY_API_CLIENT_ID || ""
 const clientSecret = process.env.REACT_APP_SPOTIFY_API_CLIENT_SECRET || ""
@@ -40,11 +41,20 @@ export const requestAuthorization = () => {
 type GetTokenResponse = {access_token:string,refresh_token:string}
 
 export const getToken = (code:string)=>{
-  const data = new FormData()
-  data.append("code",code)
-  data.append("redirect_uri",redirect_uri)
-  data.append("grant_type","authorization_code")
+  
+  const data = `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(redirect_uri)}`
+  return axios.post<GetTokenResponse>("https://accounts.spotify.com/api/token",data,{
+    "headers":{
+      "Authorization":`Basic ${new Buffer(`${clientId}:${clientSecret}`).toString('base64')}`,
+      'Content-Type':'application/x-www-form-urlencoded'
+    },
+    "responseType":"json",
+  })
+}
 
-  return axios.post<GetTokenResponse>("https://accounts.spotify.com/api/token",data,{"headers":{"Authorization":`Basic ${new Buffer(`${clientId};${clientSecret}`).toString('base64')}`},"responseType":"json"})
+type GetUserResponse = SpotifyUserProfile
+
+export const getUser = (access_token:string)=>{
+  return axios.get<GetUserResponse>("https://accounts.spotify.com/v1/me",{"headers":{"Authorization":`Basic ${access_token}`},"responseType":"json"})
 }
 

@@ -1,13 +1,11 @@
 import React,{useState,useEffect} from 'react';
-import { useSelector } from '../store/';
 import { useDispatch } from 'react-redux';
-import { Redirect, useHistory, useLocation } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 
 
-import { initUser,loginUser,logoutUser, User } from '../store/user/user'
-import { getToken, parseRedirectSearchParams } from '../spotifyapi';
+import { loginUser, User } from '../store/user/user'
+import { getToken, getUser, parseRedirectSearchParams } from '../spotifyapi';
 
-const sleep = (ms:number)=> new Promise((resolve)=>setTimeout(resolve,ms))
 
 function SpotifyCallback(){
   const location = useLocation()
@@ -27,19 +25,24 @@ function SpotifyCallback(){
     }else{
       localStorage.removeItem("authorizeState")
 
-      getToken(code).then((res)=>{
-        const {access_token , refresh_token} = res.data
+      getToken(code).then((token_res)=>{
+        const {access_token , refresh_token} = token_res.data
 
-        
+        return getUser(access_token).then((user_res)=>{
+          const profile = user_res.data
+          const user:User = {
+            profile,
+            accessToken:access_token,
+            refreshToken:refresh_token,
+            isLogin:true
+          }
+          setIsLoading(false)
+          dispatch(loginUser(user))
+        })
 
-        const user:User = {
-          name:"",
-          accessToken:access_token,
-          refreshToken:refresh_token,
-          isLogin:true
-        }
+      }).catch((error)=>{
+        console.error(error)
         setIsLoading(false)
-        dispatch(loginUser(user))
       })
       
     }

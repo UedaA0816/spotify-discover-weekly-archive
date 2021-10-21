@@ -1,19 +1,17 @@
 import { CaseReducer, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { SpotifyUserProfile } from "../../type/spotify/user";
 
 
 export type User = {
-  name:string,
-  accessToken:null|string,
-  refreshToken:null|string,
+  profile?:SpotifyUserProfile,
+  accessToken?:string,
+  refreshToken?:string,
   isLogin:boolean
 }
 const LOCALSTORAGE_KEY_USER = "user"
 
 // Stateの初期状態
 const initialState:User = {
-  name: '',
-  accessToken:null,
-  refreshToken:null,
   isLogin:false
 };
 const init: CaseReducer<User, PayloadAction> = (state, action) => {
