@@ -3,8 +3,9 @@ import { useSelector } from '../store/';
 import { useDispatch } from 'react-redux';
 import { Redirect, useHistory, useLocation } from "react-router-dom";
 
-import { initUser,loginUser,logoutUser } from '../store/user/user'
-import { parseRedirectSearchParams } from '../spotifyapi';
+
+import { initUser,loginUser,logoutUser, User } from '../store/user/user'
+import { getToken, parseRedirectSearchParams } from '../spotifyapi';
 
 const sleep = (ms:number)=> new Promise((resolve)=>setTimeout(resolve,ms))
 
@@ -21,14 +22,24 @@ function SpotifyCallback(){
     const {state,code} = parseRedirectSearchParams(location.search.replace("?",""))
     const currentState = localStorage.getItem("authorizeState")
     if(state !== currentState){
+      console.error("state_mismatch")
       setIsLoading(false)
     }else{
       localStorage.removeItem("authorizeState")
-      
-      
-      sleep(5000).then(()=>{
+
+      getToken(code).then((res)=>{
+        const {access_token , refresh_token} = res.data
+
+        
+
+        const user:User = {
+          name:"",
+          accessToken:access_token,
+          refreshToken:refresh_token,
+          isLogin:true
+        }
         setIsLoading(false)
-        // dispatch(loginUser({code:""}))
+        dispatch(loginUser(user))
       })
       
     }

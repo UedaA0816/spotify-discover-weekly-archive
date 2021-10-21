@@ -1,7 +1,7 @@
 import { CaseReducer, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
-type User = {
+export type User = {
   name:string,
   accessToken:null|string,
   refreshToken:null|string,
@@ -22,13 +22,8 @@ const init: CaseReducer<User, PayloadAction> = (state, action) => {
   const json = JSON.parse(userState)
   return json
 }
-const login: CaseReducer<User, PayloadAction<{code:string}>> = (state, action) => {
-  const res = {
-    name: 'test',
-    accessToken:"aaaa",
-    refreshToken:"bbbb",
-    isLogin:true
-  }
+const login: CaseReducer<User, PayloadAction<User>> = (state, action) => {
+  const res = action.payload
   localStorage.setItem(LOCALSTORAGE_KEY_USER,JSON.stringify(res))
   return res
 }

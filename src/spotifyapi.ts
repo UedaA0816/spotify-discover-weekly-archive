@@ -1,3 +1,4 @@
+import axios from 'axios';
 import querystring from 'querystring'
 
 const clientId = process.env.REACT_APP_SPOTIFY_API_CLIENT_ID || ""
@@ -35,3 +36,15 @@ export const requestAuthorization = () => {
     });
   return {redirectUrl,state}
 }
+
+type GetTokenResponse = {access_token:string,refresh_token:string}
+
+export const getToken = (code:string)=>{
+  const data = new FormData()
+  data.append("code",code)
+  data.append("redirect_uri",redirect_uri)
+  data.append("grant_type","authorization_code")
+
+  return axios.post<GetTokenResponse>("https://accounts.spotify.com/api/token",data,{"headers":{"Authorization":`Basic ${new Buffer(`${clientId};${clientSecret}`).toString('base64')}`},"responseType":"json"})
+}
+
