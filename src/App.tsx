@@ -16,7 +16,7 @@ function App() {
   return (
     <div className="bg-gray-900 text-white h-screen">
 
-      <BrowserRouter>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
 
         <Switch>
 
