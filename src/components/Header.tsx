@@ -11,10 +11,9 @@ import Subbutton from "./SubButton";
 function Header(){
   const dispatch = useDispatch()
   const {isLogin,name}  = useSelector(state => state.user);
-  const history = useHistory()
   const login = () => {
     const {redirectUrl:uri,state} = requestAuthorization()
-    console.log(uri)
+    localStorage.setItem("authorizeState",state)
     window.location.assign(uri)
   }
   const logout = () => {

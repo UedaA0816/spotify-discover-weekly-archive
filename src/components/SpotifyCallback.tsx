@@ -6,12 +6,10 @@ import { Redirect, useHistory, useLocation } from "react-router-dom";
 import { initUser,loginUser,logoutUser } from '../store/user/user'
 import { parseRedirectSearchParams } from '../spotifyapi';
 
-
+const sleep = (ms:number)=> new Promise((resolve)=>setTimeout(resolve,ms))
 
 function SpotifyCallback(){
   const location = useLocation()
-  console.log("SpotifyCallback")
-  const sleep = (ms:number)=> new Promise((resolve)=>setTimeout(resolve,ms))
   const dispatch = useDispatch()
   const [isLoading,setIsLoading] = useState(true)
   const [redirect,setRedirect] = useState("")
@@ -20,12 +18,12 @@ function SpotifyCallback(){
 
     console.log(location)
     setRedirect(location.search)
-    const {code,state} = parseRedirectSearchParams(location.search.replace("?",""))
-    const currentState = ""
+    const {state,code} = parseRedirectSearchParams(location.search.replace("?",""))
+    const currentState = localStorage.getItem("authorizeState")
     if(state !== currentState){
       setIsLoading(false)
     }else{
-      //clear
+      localStorage.removeItem("authorizeState")
       
       
       sleep(5000).then(()=>{
@@ -38,7 +36,7 @@ function SpotifyCallback(){
     return ()=>{
 
     }
-  },[dispatch, setIsLoading])
+  },[ dispatch, location, setIsLoading])
   return isLoading ? <div>{redirect}</div>: <Redirect to="/" />
 }
 
