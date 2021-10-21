@@ -23,6 +23,7 @@ function SpotifyCallback(){
       console.error("state_mismatch")
       setIsLoading(false)
     }else{
+      console.log("state_match")
       localStorage.removeItem("authorizeState")
 
       getToken(code).then((token_res)=>{
