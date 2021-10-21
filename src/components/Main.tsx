@@ -13,7 +13,7 @@ function Main() {
     <div className="h-screen flex flex-col">
       <Header />
       <div className="flex-grow p-8">
-        {isLogin ? <Welcome /> : <Home/>}
+        {isLogin ? <Home /> : <Welcome/>}
       </div>
     </div>
   );
