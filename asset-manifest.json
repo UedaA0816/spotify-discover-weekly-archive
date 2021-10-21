@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.f9d9cd7b.chunk.css",
-    "main.js": "/static/js/main.8f0b867d.chunk.js",
-    "main.js.map": "/static/js/main.8f0b867d.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.94aac3de.js",
-    "runtime-main.js.map": "/static/js/runtime-main.94aac3de.js.map",
-    "static/js/2.40d876f0.chunk.js": "/static/js/2.40d876f0.chunk.js",
-    "static/js/2.40d876f0.chunk.js.map": "/static/js/2.40d876f0.chunk.js.map",
-    "index.html": "/index.html",
-    "static/css/main.f9d9cd7b.chunk.css.map": "/static/css/main.f9d9cd7b.chunk.css.map",
-    "static/js/2.40d876f0.chunk.js.LICENSE.txt": "/static/js/2.40d876f0.chunk.js.LICENSE.txt"
+    "main.css": "/spotify-discover-weekly-archive/static/css/main.f9d9cd7b.chunk.css",
+    "main.js": "/spotify-discover-weekly-archive/static/js/main.475ffadb.chunk.js",
+    "main.js.map": "/spotify-discover-weekly-archive/static/js/main.475ffadb.chunk.js.map",
+    "runtime-main.js": "/spotify-discover-weekly-archive/static/js/runtime-main.b6e84660.js",
+    "runtime-main.js.map": "/spotify-discover-weekly-archive/static/js/runtime-main.b6e84660.js.map",
+    "static/js/2.40d876f0.chunk.js": "/spotify-discover-weekly-archive/static/js/2.40d876f0.chunk.js",
+    "static/js/2.40d876f0.chunk.js.map": "/spotify-discover-weekly-archive/static/js/2.40d876f0.chunk.js.map",
+    "index.html": "/spotify-discover-weekly-archive/index.html",
+    "static/css/main.f9d9cd7b.chunk.css.map": "/spotify-discover-weekly-archive/static/css/main.f9d9cd7b.chunk.css.map",
+    "static/js/2.40d876f0.chunk.js.LICENSE.txt": "/spotify-discover-weekly-archive/static/js/2.40d876f0.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.94aac3de.js",
+    "static/js/runtime-main.b6e84660.js",
     "static/js/2.40d876f0.chunk.js",
     "static/css/main.f9d9cd7b.chunk.css",
-    "static/js/main.8f0b867d.chunk.js"
+    "static/js/main.475ffadb.chunk.js"
   ]
 }
