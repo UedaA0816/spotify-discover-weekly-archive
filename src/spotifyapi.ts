@@ -55,6 +55,12 @@ export const getToken = (code:string)=>{
 type GetUserResponse = SpotifyUserProfile
 
 export const getUser = (access_token:string)=>{
-  return axios.get<GetUserResponse>("https://accounts.spotify.com/v1/me",{"headers":{"Authorization":`Basic ${access_token}`},"responseType":"json"})
+  return axios.get<GetUserResponse>("https://accounts.spotify.com/v1/me",{
+    "headers":{
+      "Authorization":`Bearer ${access_token}`,
+      "Access-Control-Allow-Origin":"*"
+    },
+    "responseType":"json"
+  })
 }
 

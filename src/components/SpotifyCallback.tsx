@@ -5,54 +5,54 @@ import { Redirect, useLocation } from "react-router-dom";
 
 import { loginUser, User } from '../store/user/user'
 import { getToken, getUser, parseRedirectSearchParams } from '../spotifyapi';
+import useSpotifyAuth from '../api/hooks/spotifyAuth';
+import { useGetTokenMutation } from '../api/spotifyAuth';
 
 
 function SpotifyCallback(){
   const location = useLocation()
   const dispatch = useDispatch()
-  const [isLoading,setIsLoading] = useState(true)
+  
   const [redirect,setRedirect] = useState("")
 
+  const {isStateMatch,code,setQuerystring} = useSpotifyAuth()
+
+  const [getToken,{isLoading,isError}] = useGetTokenMutation()
+
   useEffect(()=>{
-
     console.log(location)
-    setRedirect(location.search)
-    const {state,code} = parseRedirectSearchParams(location.search.replace("?",""))
-    const currentState = localStorage.getItem("authorizeState")
-    if(state !== currentState){
-      console.error("state_mismatch")
-      setIsLoading(false)
-    }else{
-      console.log("state_match")
-      localStorage.removeItem("authorizeState")
+    if(location == null) return
+    const qs = location.search.replace("?","")
+    setRedirect(qs)
+    setQuerystring(qs)
+    return ()=>{}
+  },[location, setQuerystring])
 
-      getToken(code).then((token_res)=>{
-        const {access_token , refresh_token} = token_res.data
+  useEffect(()=>{
+    console.log("code effect",code)
+    if(code == null) return
+    
+    getToken({code}).unwrap().then((res)=>{
+      console.log(res)
+    }).catch((error)=>{
+      console.error(error)
+    })
+    
 
-        return getUser(access_token).then((user_res)=>{
-          const profile = user_res.data
-          const user:User = {
-            profile,
-            accessToken:access_token,
-            refreshToken:refresh_token,
-            isLogin:true
-          }
-          setIsLoading(false)
-          dispatch(loginUser(user))
-        })
+  },[code, getToken])
 
-      }).catch((error)=>{
-        console.error(error)
-        setIsLoading(false)
-      })
-      
-    }
+  
 
-    return ()=>{
 
-    }
-  },[ dispatch, location, setIsLoading])
-  return isLoading ? <div>{redirect}</div>: <Redirect to="/" />
+
+
+
+  if(isStateMatch !== null && !isStateMatch)return <Redirect to="/" />
+
+  if(!isLoading && isError) return <Redirect to="/" />
+
+
+  return <div>{redirect}</div>
 }
 
 export default SpotifyCallback
