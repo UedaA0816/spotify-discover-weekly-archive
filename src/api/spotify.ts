@@ -6,7 +6,7 @@ import { SpotifyUserProfile } from '../type/spotify/user';
 export const spotifyApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://accounts.spotify.com/v1/' }),
   endpoints: (builder) => ({
-    getCurrentUser: builder.query<SpotifyUserProfile, {accessToken:string}>({
+    getCurrentUser: builder.mutation<SpotifyUserProfile, {accessToken:string}>({
       query:({accessToken})=>({
         url:"me",
         method:"GET",
@@ -20,4 +20,4 @@ export const spotifyApi = createApi({
 })
 
 // use + endpointsで設定した名前 + QueryでHooksが作られる
-export const { useGetCurrentUserQuery } = spotifyApi
+export const { useGetCurrentUserMutation } = spotifyApi

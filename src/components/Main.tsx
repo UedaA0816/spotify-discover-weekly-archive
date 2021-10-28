@@ -7,7 +7,7 @@ import Welcome from './Welcome';
 
 function Main() {
   
-  const {isLogin}  = useSelector(state => state.user);
+  const isLogin  = useSelector(state => state.user.isLogin);
   
   return (
     <div className="h-screen flex flex-col">

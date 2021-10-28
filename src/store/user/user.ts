@@ -1,4 +1,5 @@
 import { CaseReducer, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { spotifyApi } from "../../api/spotify";
 import { spotifyAuthApi } from "../../api/spotifyAuth";
 import { GetTokenResponse } from "../../type/spotify/auth";
 import { SpotifyUserProfile } from "../../type/spotify/user";
@@ -43,16 +44,18 @@ const slice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addMatcher(
-        spotifyAuthApi.endpoints.getToken.matchFulfilled,
-        (state, action: PayloadAction<GetTokenResponse>) => {
-          // state.status = 'idle';
-          state.accessToken = action.payload.access_token;
-          state.refreshToken = action.payload.refresh_token;
-        },
-      );
-    // .addMatcher(authApi.endpoints.login.matchRejected, (state) => {
-    //   state.status = 'idle';
-    // });
+      spotifyAuthApi.endpoints.getToken.matchFulfilled,
+      (state, action: PayloadAction<GetTokenResponse>) => {
+        state.accessToken = action.payload.access_token;
+        state.refreshToken = action.payload.refresh_token;
+        state.isLogin = true
+      },
+    ).addMatcher(
+      spotifyApi.endpoints.getCurrentUser.matchFulfilled,
+      (state, action: PayloadAction<SpotifyUserProfile>) => {
+        state.profile = action.payload;
+      },
+    );
   },
 });
 
