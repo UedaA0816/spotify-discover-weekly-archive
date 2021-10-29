@@ -42,21 +42,6 @@ const slice = createSlice({
     login,
     logout,
   },
-  extraReducers: (builder) => {
-    builder.addMatcher(
-      spotifyAuthApi.endpoints.getToken.matchFulfilled,
-      (state, action: PayloadAction<GetTokenResponse>) => {
-        state.accessToken = action.payload.access_token;
-        state.refreshToken = action.payload.refresh_token;
-        state.isLogin = true
-      },
-    ).addMatcher(
-      spotifyApi.endpoints.getCurrentUser.matchFulfilled,
-      (state, action: PayloadAction<SpotifyUserProfile>) => {
-        state.profile = action.payload;
-      },
-    );
-  },
 });
 
 // Reducerをエクスポートする
