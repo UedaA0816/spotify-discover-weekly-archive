@@ -6,7 +6,11 @@ module.exports = {
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        spotify: '#1ed760',
+      },
+    },
   },
   variants: {
     extend: {},
