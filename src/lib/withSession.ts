@@ -6,8 +6,8 @@ import {
 } from "next";
 
 const sessionOptions = {
-  password: "complex_password_at_least_32_characters_long",
-  cookieName: "spotify-discover-weekly-achive",
+  password: "qXwV03c9UjoqcnCu1cnJyiW0VpFsVJKXtoTgXnocDkHz5onjRm0WkqrR8VjK8be3",
+  cookieName: "spotify-discover-weekly-archive",
 };
 
 export function withSessionRoute(handler: NextApiHandler) {
@@ -28,7 +28,8 @@ export function withSessionSsr<
 declare module "iron-session" {
   interface IronSessionData {
     user?: {
-      accessToken:string
+      accessToken:string,
+      refreshToken:string,
     };
   }
 }
