@@ -32,6 +32,7 @@ const authorize:NextApiHandler = async (req, res) => {
   req.session.user = {
       accessToken: response.data.access_token,
   }
+  await req.session.save();
 
   res.status(200).redirect('/');
 };
