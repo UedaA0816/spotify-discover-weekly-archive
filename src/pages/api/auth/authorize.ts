@@ -1,5 +1,6 @@
 import axios from "axios";
-import { withSessionRoute, withSessionSsr } from "@/lib/withSession";
+import { NextApiHandler } from "next";
+import { withSessionRoute } from "@/lib/withSession";
 
 type SpotifyAuthApiResponse = {
   access_token: string,
@@ -9,13 +10,13 @@ type SpotifyAuthApiResponse = {
   refresh_token: string
 }
 
-const authorize = async (req, res) => {
+const authorize:NextApiHandler = async (req, res) => {
   const { code, state } = req.query;
 
   const params = new URLSearchParams();
   params.append('grant_type', 'authorization_code');
   params.append('code', code as string);
-  params.append('redirect_uri', process.env.RETURN_TO as string);
+  params.append('redirect_uri', process.env.RETURN_TO);
 
   const response = await axios.post<SpotifyAuthApiResponse>(
       'https://accounts.spotify.com/api/token',
@@ -28,9 +29,9 @@ const authorize = async (req, res) => {
       }
   );
 
-  req.session.set('user', {
+  req.session.user = {
       accessToken: response.data.access_token,
-  });
+  }
 
   res.status(200).redirect('/');
 };

@@ -24,3 +24,11 @@ export function withSessionSsr<
 ) {
   return withIronSessionSsr(handler, sessionOptions);
 }
+
+declare module "iron-session" {
+  interface IronSessionData {
+    user?: {
+      accessToken:string
+    };
+  }
+}
