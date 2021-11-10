@@ -8,15 +8,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.6.2",
     "axios": "^0.24.0",
     "iron-session": "^6.0.2",
     "next": "12.0.3",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-logger": "^3.0.6",
+    "spotify-web-api-ts": "^1.4.5"
   },
   "devDependencies": {
     "@types/node": "^16.11.6",
     "@types/react": "^17.0.34",
+    "@types/react-redux": "^7.1.20",
+    "@types/redux-logger": "^3.0.9",
     "autoprefixer": "^10.4.0",
     "eslint": "7",
     "eslint-config-next": "12.0.3",
