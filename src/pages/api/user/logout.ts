@@ -1,11 +1,18 @@
 import { NextApiHandler } from "next";
 import { withSessionRoute } from "@/lib/withSession";
 
-const authorize:NextApiHandler = async (req, res) => {
+const logout:NextApiHandler = async (req, res) => {
 
-  await req.session.destroy();
+  try {
+  
+    await req.session.destroy();
 
-  res.status(200).redirect('/');
+    res.status(200).json({});
+
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+
 };
 
-export default withSessionRoute(authorize);
+export default withSessionRoute(logout);
