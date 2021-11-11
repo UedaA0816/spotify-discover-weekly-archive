@@ -1,8 +1,6 @@
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
 import Main from '@/components/Main'
-import Head from 'next/head'
-import Image from 'next/image'
 
 export default function Home({ loginPath }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
@@ -12,7 +10,7 @@ export default function Home({ loginPath }: InferGetStaticPropsType<typeof getSt
   )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<{loginPath:string}> = async () => {
   const scopes = ['user-read-email', 'user-read-private', 'playlist-modify-public', 'playlist-modify-private'];
   const params = new URLSearchParams();
   params.append('client_id', process.env.SPOTIFY_API_CLIENT_ID);

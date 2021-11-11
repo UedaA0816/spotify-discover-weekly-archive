@@ -1,6 +1,7 @@
 
 import { deleteUser } from "@/ducks/user/actions";
 import { useUserState } from "@/ducks/user/selector";
+import { generateRandomString } from "@/lib/common";
 import axios from "axios";
 
 import { useCallback, useEffect, useState } from "react";
@@ -14,9 +15,11 @@ function Header({loginPath}:{loginPath:string}){
   const dispatch = useDispatch()
   const user = useUserState();
 
-  const login = useCallback(() => {
-    window.location.href = loginPath;
-  }, [loginPath]);
+  const login = () => {
+    const state = generateRandomString(16)
+    localStorage.setItem("authorizeState",state)
+    window.location.href = loginPath + state//TODO;
+  }
 
   const handlerLogin = () => {
     login()

@@ -19,13 +19,21 @@ function Main({loginPath}:{loginPath:string}) {
 
   useEffect(() => {
     if(login !== undefined){
-      console.log(login)
-      //APIカレントユーザ
-      axios.get<PrivateUser>("/api/me").then((res)=>{
-        console.log(res)
-        dispatch(setUser(res.data))
-        router.push("")
-      })
+      const currentState = localStorage.getItem("authorizeState")
+      console.log({state:login,storageState:currentState})
+      if(login === currentState){
+        //APIカレントユーザ
+        axios.get<PrivateUser>("/api/me").then((res)=>{
+          dispatch(setUser(res.data))
+          router.push("")
+        })
+      }else{
+        alert("不正なログインです")
+        axios.post("/api/user/logout").then(()=>{
+          router.push("")
+        })
+      }
+      localStorage.removeItem("authorizeState")
     }
   }, [login])
   

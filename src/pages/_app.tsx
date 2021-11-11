@@ -5,15 +5,7 @@ import createStore from '../ducks/createStore';
 
 import {
   persistStore,
-  persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
 } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
 import { PersistGate } from 'redux-persist/integration/react'
 
 function MyApp({ Component, pageProps }:AppProps) {

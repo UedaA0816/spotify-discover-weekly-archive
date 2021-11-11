@@ -35,7 +35,6 @@ const createStore = () => {
   }
   
   const persistedReducer = persistReducer(persistConfig, rootReducer)
-  const middlewareList = [...getDefaultMiddleware(), logger];
 
   return configureStore({
     reducer: persistedReducer,
