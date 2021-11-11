@@ -15,7 +15,7 @@ const userSlice = createSlice({
       state.user = action.payload
     },
     deleteUser: (state, action:PayloadAction<void> ) => {
-      state = initialState
+      state.user = undefined 
     },
   },
 });
