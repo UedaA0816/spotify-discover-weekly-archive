@@ -21,7 +21,7 @@ function Main({loginPath}:{loginPath:string}) {
     if(login !== undefined){
       const currentState = localStorage.getItem("authorizeState")
       console.log({state:login,storageState:currentState})
-      if(login === currentState){
+      if(currentState !== null && login === currentState){
         //APIカレントユーザ
         axios.get<PrivateUser>("/api/me").then((res)=>{
           dispatch(setUser(res.data))
