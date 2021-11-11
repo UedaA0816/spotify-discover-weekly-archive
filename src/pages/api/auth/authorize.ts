@@ -12,6 +12,7 @@ type SpotifyAuthApiResponse = {
 
 const authorize: NextApiHandler = async (req, res) => {
   try {
+    console.log("API::/auth/authorize")
     const { code, state } = req.query;
   
     const params = new URLSearchParams();
