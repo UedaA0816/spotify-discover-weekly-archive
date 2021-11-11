@@ -14,9 +14,11 @@ import storage from 'redux-persist/lib/storage'
 import { PersistGate } from 'redux-persist/integration/react'
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import userSlice, { initialState as userState } from './user/slice';
+import { spotifyApi } from './api/spotify';
 
 const rootReducer = combineReducers({
   user: userSlice.reducer,
+  [spotifyApi.reducerPath]:spotifyApi.reducer,
 });
 
 const preloadedState = () => {
@@ -32,6 +34,7 @@ const createStore = () => {
     key: 'root',
     version: 1,
     storage,
+    blacklist:[spotifyApi.reducerPath]
   }
   
   const persistedReducer = persistReducer(persistConfig, rootReducer)
@@ -39,11 +42,15 @@ const createStore = () => {
   return configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware)=>(
-      [...getDefaultMiddleware({
-        serializableCheck: {
-          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-        },
-      }),logger]
+      [
+        ...getDefaultMiddleware({
+          serializableCheck: {
+            ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+          },
+        }),
+        logger,
+        spotifyApi.middleware,
+      ]
     ),
     devTools: process.env.NODE_ENV !== 'production',
     preloadedState: preloadedState(),
