@@ -28,7 +28,9 @@ function Main({loginPath}:{loginPath:string}) {
           router.push("")
         })
       }else{
-        alert("不正なログインです")
+        setTimeout(()=>{
+          alert("不正なログインです")
+        },0)
         axios.post("/api/user/logout").then(()=>{
           router.push("")
         })
