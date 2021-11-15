@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React from 'react';
+import Button from './Button';
 
 function Archive() {
   const handleArchive = () => {
@@ -12,7 +13,7 @@ function Archive() {
   }
   return (
     <div className="w-[300px]">
-      <button onClick={handleArchive}>archive</button>
+      <Button onClick={handleArchive}>archive</Button>
     </div>
   );
 }

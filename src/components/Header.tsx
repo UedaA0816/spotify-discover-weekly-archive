@@ -4,9 +4,10 @@ import { useUserState } from "@/ducks/user/selector";
 import { generateRandomString } from "@/lib/common";
 import axios from "axios";
 
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
+import Button from "./Button";
 import Subbutton from "./SubButton";
 
 
@@ -36,7 +37,7 @@ function Header({loginPath}:{loginPath:string}){
         {user && <span className="ml-4">ID:{user?.display_name}</span>}
       </div>
       <div className="flex-shrink-0">
-        { user ? <Subbutton onClick={handlerLogout}>LOG OUT</Subbutton> : <Subbutton onClick={handlerLogin}>LOG IN</Subbutton>}
+        { user ? <Subbutton onClick={handlerLogout}>LOG OUT</Subbutton> : <Button onClick={handlerLogin}>LOG IN</Button>}
       </div>
     </header>
   )
