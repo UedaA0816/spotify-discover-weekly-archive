@@ -21,7 +21,7 @@ const authorize: NextApiHandler = async (req, res) => {
           req.session.user.accessToken = response.access_token
           await req.session.save()
           res.status(200);
-          res.json({});
+          res.json({message:"accessToken refreshed"});
         } catch (error) {
           await req.session.destroy()
           res.status(401)
