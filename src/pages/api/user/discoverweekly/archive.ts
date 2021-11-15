@@ -56,7 +56,7 @@ const archive:NextApiHandler = async (req, res) => {
     const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
     const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
 
-    res.status(200).json(addPlaylist);
+    res.status(200).json({playlist});
     
   } catch (error) {
     res.status(500).send(error.message)
