@@ -7,7 +7,7 @@ import { SpotifyWebApi } from "spotify-web-api-ts";
 const authorize: NextApiHandler = async (req, res) => {
   try {
     console.log("API::/auth/checkLogin")
-    const {accessToken,refreshToken} = req.session.user
+    const {accessToken,refreshToken} = req.session.user || {}
     try {
       const spotify = new SpotifyWebApi({ accessToken });
       await spotify.users.getMe()
@@ -25,12 +25,12 @@ const authorize: NextApiHandler = async (req, res) => {
         } catch (error) {
           await req.session.destroy()
           res.status(401)
-          res.json({ message: 'unauthorized' });
+          res.json({ message: 'unauthorized',error:error });
         }
       }else{
         await req.session.destroy()
         res.status(401)
-        res.json({ message: 'unauthorized' });
+        res.json({ message: 'unauthorized',error:"refreshToken not found" });
       }
     }    
   } catch (error) {
