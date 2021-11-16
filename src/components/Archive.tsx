@@ -63,12 +63,12 @@ function Archive() {
   }
 
   const playlistNameTooltip = `
-  playlistNameTooltip
-  playlistNameTooltip
+  If you want to include the date in the name, write {date}.
+  ex) "mylist {date}" => "mylist 2021/01/01" 
   `
   const playlistIdOrUrlTooltip = `
-  playlistIdOrUrlTooltip
-  playlistIdOrUrlTooltip
+  In the case of playlistID : {22_charas_playlist_id_}
+  In the case of playlistURL : playlist > share > copy link
   `
 
   return (
