@@ -14,15 +14,21 @@ import storage from 'redux-persist/lib/storage'
 import { PersistGate } from 'redux-persist/integration/react'
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import userSlice, { initialState as userState } from './user/slice';
+import archiveFormSlice, { initialState as archiveFormState } from './archiveForm/slice';
 import { spotifyApi } from './api/spotify';
+import { TypedUseSelectorHook, useSelector } from 'react-redux';
 
 const rootReducer = combineReducers({
   user: userSlice.reducer,
+  archiveForm: archiveFormSlice.reducer,
   [spotifyApi.reducerPath]:spotifyApi.reducer,
 });
 
 const preloadedState = () => {
-  return { user: userState };
+  return { 
+    user: userState,
+    archiveForm: archiveFormState
+   };
 };
 
 export type StoreState = ReturnType<typeof preloadedState>;

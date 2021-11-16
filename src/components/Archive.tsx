@@ -1,41 +1,93 @@
+import { setData } from '@/ducks/archiveForm/actions';
+import { useArchiveFormState } from '@/ducks/archiveForm/selector';
+import { ArchiveFormData } from '@/ducks/archiveForm/slice';
 import axios from 'axios';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Button from './Button';
+import { useDispatch } from 'react-redux';
+import debounce from 'lodash.debounce'
 
-type FormData = {
-  playlistName: string;
-  playlistIdOrUrl: string;
-  isUrl:boolean;
-};
+import Button from './Button';
+import Tooltip from './Tooltip';
+import TooltipIcon from './TooltipIcon';
+
 
 function Archive() {
-  const { register, setValue, handleSubmit, formState: { errors } } = useForm<FormData>({defaultValues:{playlistName:"DiscoverWeekly {date}"}});
+  const { register, watch, setValue, handleSubmit, formState: { errors } , } = useForm<ArchiveFormData>({defaultValues:{playlistName:"DiscoverWeekly {date}"}});
 
-  const handleArchive = (data:FormData) => {
+  const data = useArchiveFormState()
+  const dispatch = useDispatch()
+
+  const [initData, setInitData] = useState(false)
+
+  useEffect(() => {
+    
+    if(data !== null && !initData) {
+      setValue("isUrl",data.isUrl)
+      setValue("playlistIdOrUrl",data.playlistIdOrUrl)
+      setValue("playlistName",data.playlistName)
+      setInitData(true)
+    }
+    
+  }, [data,initData])
+
+  const updateDormData = debounce((data:ArchiveFormData)=>dispatch(setData(data)),1000)
+
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      console.log(value, name, type)
+      if(type === "change") updateDormData((value as any))
+    });
+    return () => subscription.unsubscribe();
+  }, [watch])
+
+  const handleArchive = (isAutoArchive:boolean) => (data:ArchiveFormData) => {
     console.log(data)
+
     const {playlistName,playlistIdOrUrl,isUrl} = data
     const param = {
       playlistName,
       ...(!isUrl ? {playlistId:playlistIdOrUrl} : {}),
       ...(isUrl ? {playlistIdUrl:playlistIdOrUrl} : {})
     }
-    // const param = {
-    //   playlistName: "DiscoverWeekly {date}",
-    //   // playlistId:"37i9dQZEVXcSupRFuEvSif",
-    //   playlistIdUrl: "https://open.spotify.com/playlist/37i9dQZEVXcSupRFuEvSif?si=7d8ea39d1c594e2e",
-    // }
-    axios.post("/api/user/discoverweekly/archive", param)
+    if(!isAutoArchive){
+      // const param = {
+      //   playlistName: "DiscoverWeekly {date}",
+      //   // playlistId:"37i9dQZEVXcSupRFuEvSif",
+      //   playlistIdUrl: "https://open.spotify.com/playlist/37i9dQZEVXcSupRFuEvSif?si=7d8ea39d1c594e2e",
+      // }
+      axios.post("/api/user/discoverweekly/archive", param)
+    }else{
+      alert("it is feature")
+    }
   }
+
+  const playlistNameTooltip = `
+  playlistNameTooltip
+  playlistNameTooltip
+  `
+  const playlistIdOrUrlTooltip = `
+  playlistIdOrUrlTooltip
+  playlistIdOrUrlTooltip
+  `
+
   return (
     <div className="w-[300px] sm:w-[400px]">
-      <form onSubmit={handleSubmit(handleArchive)}>
+      <form>
         <div className="mb-6">
-          <label htmlFor="playlistName" className="text-sm font-medium text-gray-100 block mb-2">Your playlist name</label>
+          <label htmlFor="playlistName" className="text-sm font-medium text-gray-100 block mb-2">Your playlist name 
+            <Tooltip description={playlistNameTooltip} className="ml-3">
+              <TooltipIcon />
+            </Tooltip>
+          </label>
           <input type="text" id="playlistName" className="bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg outline-none focus-visible:ring-spotify focus-visible:border-spotify block w-full p-2.5" placeholder="DiscoverWeekly {date}" {...register("playlistName",{required:true})} />
         </div>
         <div className="mb-3">
-          <label htmlFor="playlistId" className="text-sm font-medium text-gray-100 block mb-2">Your playlist ID or URL</label>
+          <label htmlFor="playlistId" className="text-sm font-medium text-gray-100 block mb-2">Your playlist ID or URL
+            <Tooltip description={playlistIdOrUrlTooltip} className="ml-3">
+              <TooltipIcon />
+            </Tooltip>
+          </label>
           <input type="text" id="playlistId" className="bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg outline-none focus-visible:ring-spotify focus-visible:border-spotify block w-full p-2.5" placeholder="0123456789012345678901" {...register("playlistIdOrUrl",{required:true})} />
         </div>
         <div className="flex items-start mb-6">
@@ -47,7 +99,8 @@ function Archive() {
           </div>
         </div>
         <div className="text-right">
-          <Button>Archive</Button>
+          <Button className="mr-4" onClick={handleSubmit(handleArchive(true))}>Auto Archive</Button>
+          <Button onClick={handleSubmit(handleArchive(false))}>Archive</Button>
         </div>
       </form>
     </div>
