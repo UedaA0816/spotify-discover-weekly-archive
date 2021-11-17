@@ -42,7 +42,7 @@ function Main({loginPath}:{loginPath:string}) {
   return (
     <div className="h-screen flex flex-col">
       <Header loginPath={loginPath} />
-      <div className="flex-grow p-8">
+      <div className="flex-grow px-8 overflow-scroll">
         {user ? <Home /> : <Welcome/>}
       </div>
     </div>

@@ -73,7 +73,8 @@ function Archive() {
 
   return (
     <div className="w-[300px] sm:w-[400px]">
-      <form>
+      <h1 className="mb-4 font-bold text-xl tracking-wider">ARCHIVE</h1>
+      <form className="px-2">
         <div className="mb-6">
           <label htmlFor="playlistName" className="text-sm font-medium text-gray-100 block mb-2">Your playlist name 
             <Tooltip description={playlistNameTooltip} className="ml-3">
