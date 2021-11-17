@@ -1,22 +1,53 @@
-import React from 'react';
-import { useSelector } from '../store/';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 import Header from './Header';
 import Home from './Home';
 import Welcome from './Welcome';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { useUserState } from '@/ducks/user/selector';
+import { PrivateUser } from 'spotify-web-api-ts/types/types/SpotifyObjects';
+import { setUser } from '@/ducks/user/actions';
 
-function Main() {
+function Main({loginPath}:{loginPath:string}) {
   
-  const {isLogin}  = useSelector(state => state.user);
+  const router = useRouter();
+  const { login } = router.query
+  const dispatch = useDispatch()
+  const user = useUserState();
+
+  useEffect(() => {
+    if(login !== undefined){
+      const currentState = localStorage.getItem("authorizeState")
+      console.log({state:login,storageState:currentState})
+      if(currentState !== null && login === currentState){
+        //APIカレントユーザ
+        axios.get<PrivateUser>("/api/me").then((res)=>{
+          dispatch(setUser(res.data))
+          router.push("")
+        })
+      }else{
+        setTimeout(()=>{
+          alert("不正なログインです")
+        },0)
+        axios.post("/api/user/logout").then(()=>{
+          router.push("")
+        })
+      }
+      localStorage.removeItem("authorizeState")
+    }
+  }, [login])
   
   return (
     <div className="h-screen flex flex-col">
-      <Header />
-      <div className="flex-grow p-8">
-        {isLogin ? <Home /> : <Welcome/>}
+      <Header loginPath={loginPath} />
+      <div className="flex-grow px-8 overflow-scroll">
+        {user ? <Home /> : <Welcome/>}
       </div>
     </div>
   );
 }
 
 export default  Main
+
