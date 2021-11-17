@@ -6,8 +6,11 @@ import {
 } from "next";
 
 const sessionOptions = {
-  password: "qXwV03c9UjoqcnCu1cnJyiW0VpFsVJKXtoTgXnocDkHz5onjRm0WkqrR8VjK8be3",
+  password: process.env.COOKIE_PASSWORD,
   cookieName: "spotify-discover-weekly-archive",
+  cookieOptions: {
+    maxAge:12*30*24*60*60
+  }
 };
 
 export function withSessionRoute(handler: NextApiHandler) {

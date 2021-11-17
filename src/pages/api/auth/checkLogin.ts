@@ -8,6 +8,7 @@ const authorize: NextApiHandler = async (req, res) => {
   try {
     console.log("API::/auth/checkLogin")
     const {accessToken,refreshToken} = req.session.user || {}
+    if(!accessToken || !refreshToken) return res.status(401).json({message:"session token Error"});
     try {
       const spotify = new SpotifyWebApi({ accessToken });
       await spotify.users.getMe()
@@ -16,7 +17,9 @@ const authorize: NextApiHandler = async (req, res) => {
     } catch (error) {
       if(refreshToken){
         try {
-          const spotify = new SpotifyWebApi();
+          const clientId = process.env.SPOTIFY_API_CLIENT_ID
+          const clientSecret = process.env.SPOTIFY_API_CLIENT_SECRET
+          const spotify = new SpotifyWebApi({clientId,clientSecret});
           const response = await spotify.getRefreshedAccessToken(refreshToken)
           req.session.user.accessToken = response.access_token
           await req.session.save()
