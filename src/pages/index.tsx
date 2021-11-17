@@ -4,7 +4,7 @@ import Main from '@/components/Main'
 
 export default function Home({ loginPath }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
-    <div className="bg-gray-900 text-white h-screen">
+    <div className=" bg-gradient-to-t to-gray-900 via-gray-900 from-black  text-white h-screen">
       <Main loginPath={loginPath}/>
     </div>
   )
