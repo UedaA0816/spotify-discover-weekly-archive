@@ -10,6 +10,7 @@ import debounce from 'lodash.debounce'
 import Button from './Button';
 import Tooltip from './Tooltip';
 import TooltipIcon from './TooltipIcon';
+import OutLink from './OutLink';
 
 
 function Archive() {
@@ -72,11 +73,11 @@ function Archive() {
   `
 
   return (
-    <div className="w-[300px] sm:w-[400px] md:w-[500px]">
-      <h1 className="mb-4 font-bold text-xl tracking-wider">ARCHIVE</h1>
+    <div className="w-[290px] sm:w-[400px] md:w-[500px]">
+      <h1 className="mb-4 font-bold text-xl tracking-wider">ARCHIVE <OutLink className=" text-xs ms:text-sm ml-2 sm:ml-8 md:ml-32 " href="https://open.spotify.com/genre/discover-page" icon>Open Spotify Web Player</OutLink></h1>
       <form className="px-2">
         <div className="mb-6">
-          <label htmlFor="playlistName" className="text-sm font-medium text-gray-100 block mb-2">Your playlist name 
+          <label htmlFor="playlistName" className="text-sm font-medium text-gray-100 block mb-2">Create playlist name 
             <Tooltip description={playlistNameTooltip} className="ml-3">
               <TooltipIcon />
             </Tooltip>
