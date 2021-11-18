@@ -25,14 +25,14 @@ function Main({loginPath}:{loginPath:string}) {
         //APIカレントユーザ
         axios.get<PrivateUser>("/api/me").then((res)=>{
           dispatch(setUser(res.data))
-          router.push("")
+          router.replace("")
         })
       }else{
         setTimeout(()=>{
           alert("不正なログインです")
         },0)
         axios.post("/api/user/logout").then(()=>{
-          router.push("")
+          router.replace("")
         })
       }
       localStorage.removeItem("authorizeState")
