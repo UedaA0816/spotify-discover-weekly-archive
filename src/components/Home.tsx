@@ -1,6 +1,7 @@
 import { useCheckLoginQuery } from '@/ducks/api/spotify';
 import React from 'react';
 import Archive from './Archive';
+import LoadingSpinner from './LoadingSpinner';
 
 function Home() {
 
@@ -8,7 +9,7 @@ function Home() {
    
   return (
     <div className="flex flex-col justify-center items-center py-8 gap-6 min-h-full">
-      {isLoading ? "loading" : error ? "error:ログインし直してください" : (
+      {isLoading ? <LoadingSpinner /> : error ? "error:ログインし直してください" : (
         <>
           <Archive />
         </>
