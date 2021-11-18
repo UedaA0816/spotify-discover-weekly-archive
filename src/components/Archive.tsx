@@ -2,7 +2,7 @@ import { setData } from '@/ducks/archiveForm/actions';
 import { useArchiveFormState } from '@/ducks/archiveForm/selector';
 import { ArchiveFormData } from '@/ducks/archiveForm/slice';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import debounce from 'lodash.debounce'
@@ -11,6 +11,8 @@ import Button from './Button';
 import Tooltip from './Tooltip';
 import TooltipIcon from './TooltipIcon';
 import OutLink from './OutLink';
+import LoadingSpinner from './LoadingSpinner';
+import { useDiscoverweeklyArchiveMutation } from '@/ducks/api/spotify';
 
 
 function Archive() {
@@ -32,36 +34,44 @@ function Archive() {
     
   }, [data,initData])
 
-  const updateDormData = debounce((data:ArchiveFormData)=>dispatch(setData(data)),1000)
+  const updateFormData = debounce((data:ArchiveFormData)=>dispatch(setData(data)),1000)
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
       console.log(value, name, type)
-      if(type === "change") updateDormData((value as any))
+      if(type === "change") updateFormData((value as any))
     });
     return () => subscription.unsubscribe();
   }, [watch])
 
-  const handleArchive = (isAutoArchive:boolean) => (data:ArchiveFormData) => {
-    console.log(data)
+  const [isReadyArchiveSubmit, setIsReadyArchiveSubmit] = useState(true)
+  const [discoverweeklyArchive,{isLoading:isLoadingArchive,isError:isErrorArchive,isSuccess:isSuccessArchive}] = useDiscoverweeklyArchiveMutation()
 
-    const {playlistName,playlistIdOrUrl,isUrl} = data
-    const param = {
-      playlistName,
-      ...(!isUrl ? {playlistId:playlistIdOrUrl} : {}),
-      ...(isUrl ? {playlistIdUrl:playlistIdOrUrl} : {})
-    }
-    if(!isAutoArchive){
-      // const param = {
-      //   playlistName: "DiscoverWeekly {date}",
-      //   // playlistId:"37i9dQZEVXcSupRFuEvSif",
-      //   playlistIdUrl: "https://open.spotify.com/playlist/37i9dQZEVXcSupRFuEvSif?si=7d8ea39d1c594e2e",
-      // }
-      axios.post("/api/user/discoverweekly/archive", param)
-    }else{
-      alert("it is feature")
-    }
-  }
+  const handleArchive = useCallback(
+    (isAutoArchive:boolean) => (data:ArchiveFormData) => {
+      console.log(data)
+  
+      const {playlistName,playlistIdOrUrl,isUrl} = data
+      const param = {
+        playlistName,
+        ...(!isUrl ? {playlistId:playlistIdOrUrl} : {}),
+        ...(isUrl ? {playlistIdUrl:playlistIdOrUrl} : {})
+      }
+      if(!isAutoArchive){
+        // const param = {
+        //   playlistName: "DiscoverWeekly {date}",
+        //   // playlistId:"37i9dQZEVXcSupRFuEvSif",
+        //   playlistIdUrl: "https://open.spotify.com/playlist/37i9dQZEVXcSupRFuEvSif?si=7d8ea39d1c594e2e",
+        // }
+        discoverweeklyArchive(param)
+        // axios.post("/api/user/discoverweekly/archive", param)
+      }else{
+        alert("it is feature")
+      }
+    } 
+    ,[discoverweeklyArchive]
+    // ,[]
+  )
 
   const playlistNameTooltip = `
   If you want to include the date in the name, write {date}.
@@ -74,7 +84,7 @@ function Archive() {
 
   return (
     <div className="w-[290px] sm:w-[400px] md:w-[500px]">
-      <h1 className="mb-4 font-bold text-xl tracking-wider">ARCHIVE <OutLink className=" text-xs ms:text-sm ml-2 sm:ml-8 md:ml-32 " href="https://open.spotify.com/genre/discover-page" icon>Open Spotify Web Player</OutLink></h1>
+      <h1 className="mb-4 font-bold text-xl tracking-wider">ARCHIVE <OutLink className=" text-xs ms:text-sm sm:ml-8 md:ml-32 " href="https://open.spotify.com/genre/discover-page" icon>Open Spotify Web Player</OutLink></h1>
       <form className="px-2">
         <div className="mb-6">
           <label htmlFor="playlistName" className="text-sm font-medium text-gray-100 block mb-2">Create playlist name 
@@ -102,7 +112,20 @@ function Archive() {
         </div>
         <div className="text-right">
           <Button className="mr-4" onClick={handleSubmit(handleArchive(true))}>Auto Archive</Button>
-          <Button onClick={handleSubmit(handleArchive(false))}>Archive</Button>
+          <Button 
+            onClick={
+              isReadyArchiveSubmit ? ()=> {
+                handleSubmit(handleArchive(false))()
+                setIsReadyArchiveSubmit(false)
+              } : ()=>setIsReadyArchiveSubmit(true)
+            }
+          >
+            { isReadyArchiveSubmit ? "Archive" : 
+              isLoadingArchive ? <LoadingSpinner size={16} /> :
+              isErrorArchive ? "Error!" :
+              isSuccessArchive ? "Success!" : ""
+            }
+          </Button>
         </div>
       </form>
     </div>
