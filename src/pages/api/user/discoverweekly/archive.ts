@@ -30,33 +30,35 @@ const getPlaylistIdFromUrl = (url:string):string => {
 
 const archive:NextApiHandler = async (req, res) => {
   try {
-    const {playlistName,playlistId,playlistIdUrl} = req.body
-    console.log("API::/user/discoverweekly/archive",{playlistName,playlistId,playlistIdUrl})
-
-    // Array(18).fill(null).map((_,i)=> {
-    //   const date = new Date()
-    //   date.setDate(i)
-    //   return new Date(date.getTime())
-    // }).forEach(d=>console.log(d,getDate(d)))
-
-    if(!playlistName) return res.status(403).json({message:"playlistName Error"});
-
-    const targetPlaylistName:string = (playlistName as string).includes("{date}") ? (playlistName as string).replace("{date}",getDate(new Date())) : playlistName
-
-    const targetPlaylistId:string = playlistId || getPlaylistIdFromUrl(playlistIdUrl)
-
-    if(!playlistIdRegex.test(targetPlaylistId)) return res.status(403).json({message:"playlistId Error"});
+    switch (req.method) {
+      case "POST": {
     
-    const accessToken = req.session.user.accessToken
-
-    const spotify = new SpotifyWebApi({ accessToken });
-    const me = await spotify.users.getMe()
-
-    const discoverweeklyPlaylist = await spotify.playlists.getPlaylistItems(targetPlaylistId)
-    const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
-    const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
-
-    res.status(200).json({playlist});
+        const {playlistName,playlistId,playlistIdUrl} = req.body
+        console.log("API::/user/discoverweekly/archive",{playlistName,playlistId,playlistIdUrl})
+    
+        if(!playlistName) return res.status(403).json({message:"playlistName Error"});
+    
+        const targetPlaylistName:string = (playlistName as string).includes("{date}") ? (playlistName as string).replace("{date}",getDate(new Date())) : playlistName
+    
+        const targetPlaylistId:string = playlistId || getPlaylistIdFromUrl(playlistIdUrl)
+    
+        if(!playlistIdRegex.test(targetPlaylistId)) return res.status(403).json({message:"playlistId Error"});
+        
+        const accessToken = req.session.user.accessToken
+    
+        const spotify = new SpotifyWebApi({ accessToken });
+        const me = await spotify.users.getMe()
+    
+        const discoverweeklyPlaylist = await spotify.playlists.getPlaylistItems(targetPlaylistId)
+        const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
+        const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
+        res.status(200).json({data:playlist});
+        break;
+      }
+      default:
+        res.status(404).end()
+        break;
+    }
     
   } catch (error) {
     res.status(500).send(error.message)
