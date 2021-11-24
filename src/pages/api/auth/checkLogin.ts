@@ -4,7 +4,7 @@ import { withSessionRoute } from "@/lib/withSession";
 import { SpotifyWebApi } from "spotify-web-api-ts";
 
 
-const authorize: NextApiHandler = async (req, res) => {
+const checkLogin: NextApiHandler = async (req, res) => {
   try {
     console.log("API::/auth/checkLogin")
     const {accessToken,refreshToken} = req.session.user || {}
@@ -41,4 +41,4 @@ const authorize: NextApiHandler = async (req, res) => {
   }
 };
 
-export default withSessionRoute(authorize);
+export default withSessionRoute(checkLogin);
