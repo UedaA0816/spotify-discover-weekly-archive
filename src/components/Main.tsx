@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { useUserState } from '@/ducks/user/selector';
 import { PrivateUser } from 'spotify-web-api-ts/types/types/SpotifyObjects';
 import { setUser } from '@/ducks/user/actions';
+import { MeApiResponse } from '@/types/api/me';
 
 function Main({loginPath}:{loginPath:string}) {
   
@@ -23,8 +24,8 @@ function Main({loginPath}:{loginPath:string}) {
       console.log({state:login,storageState:currentState})
       if(currentState !== null && login === currentState){
         //APIカレントユーザ
-        axios.get<PrivateUser>("/api/me").then((res)=>{
-          dispatch(setUser(res.data))
+        axios.get<MeApiResponse>("/api/me").then((res)=>{
+          dispatch(setUser(res.data.data))
           router.replace("")
         })
       }else{
