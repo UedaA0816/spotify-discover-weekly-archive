@@ -58,19 +58,12 @@ function Archive() {
         ...(isUrl ? {playlistIdUrl:playlistIdOrUrl} : {})
       }
       if(!isAutoArchive){
-        // const param = {
-        //   playlistName: "DiscoverWeekly {date}",
-        //   // playlistId:"37i9dQZEVXcSupRFuEvSif",
-        //   playlistIdUrl: "https://open.spotify.com/playlist/37i9dQZEVXcSupRFuEvSif?si=7d8ea39d1c594e2e",
-        // }
         discoverweeklyArchive(param)
-        // axios.post("/api/user/discoverweekly/archive", param)
       }else{
         alert("it is feature")
       }
     } 
     ,[discoverweeklyArchive]
-    // ,[]
   )
 
   const playlistNameTooltip = `
@@ -110,18 +103,19 @@ function Archive() {
             <label htmlFor="isUrl" className="font-medium text-gray-100">it is URL</label>
           </div>
         </div>
-        <div className="text-right">
-          <Button className="mr-4" onClick={handleSubmit(handleArchive(true))}>Auto Archive</Button>
+        <div className=" flex justify-end gap-4">
+          <Button className="" onClick={handleSubmit(handleArchive(true))}>Auto Archive</Button>
           <Button 
             onClick={
               isReadyArchiveSubmit ? ()=> {
                 handleSubmit(handleArchive(false))()
                 setIsReadyArchiveSubmit(false)
-              } : ()=>setIsReadyArchiveSubmit(true)
+              } : ()=>{if(!isLoadingArchive)setIsReadyArchiveSubmit(true)}
             }
+            className=" w-24"
           >
             { isReadyArchiveSubmit ? "Archive" : 
-              isLoadingArchive ? <LoadingSpinner size={16} /> :
+              isLoadingArchive ? <LoadingSpinner size={20} /> :
               isErrorArchive ? "Error!" :
               isSuccessArchive ? "Success!" : ""
             }

@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { Playlist } from 'spotify-web-api-ts/types/types/SpotifyObjects'
 
 type ArchiveParam = {
   playlistIdUrl?: string;
@@ -14,9 +15,9 @@ export const spotifyApi = createApi({
     checkLogin: builder.query<{}, void>({
       query: () => `auth/checkLogin`,
     }),
-    discoverweeklyArchive: builder.mutation<{}, ArchiveParam>({
+    discoverweeklyArchive: builder.mutation<{data:Playlist}, ArchiveParam>({
       query: (param) => ({
-        url:`/user/discoverweekly/archive`,
+        url:`user/discoverweekly/archive`,
         method:"POST",
         body:param
       })
