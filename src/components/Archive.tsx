@@ -16,7 +16,7 @@ import { useDiscoverweeklyArchiveMutation } from '@/ducks/api/spotify';
 
 
 function Archive() {
-  const { register, watch, setValue, handleSubmit, formState: { errors } , } = useForm<ArchiveFormData>({defaultValues:{playlistName:"DiscoverWeekly {date}"}});
+  const { register, watch, setValue, handleSubmit, formState: { errors } , } = useForm<ArchiveFormData>({defaultValues:{playlistName:"Discover Weekly {date}"}});
 
   const data = useArchiveFormState()
   const dispatch = useDispatch()
@@ -92,7 +92,7 @@ function Archive() {
               <TooltipIcon />
             </Tooltip>
           </label>
-          <input type="text" id="playlistName" className="bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg outline-none focus-visible:ring-spotify focus-visible:border-spotify block w-full p-2.5" placeholder="DiscoverWeekly {date}" {...register("playlistName",{required:true})} />
+          <input type="text" id="playlistName" className="bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg outline-none focus-visible:ring-spotify focus-visible:border-spotify block w-full p-2.5" placeholder="Discover Weekly {date}" {...register("playlistName",{required:true})} />
         </div>
         <div className="mb-3">
           <label htmlFor="playlistId" className="text-sm font-medium text-gray-100 block mb-2">Your playlist ID or URL
