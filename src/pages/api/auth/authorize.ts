@@ -35,6 +35,7 @@ const authorize: NextApiHandler<AuthorizeApiResponse> = async (req, res) => {
     res.status(200).redirect(`/?login=${state}`);
     
   } catch (error) {
+    console.error(error)
     res.status(500).send({
       code:"500",
       message:error.message,
