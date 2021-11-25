@@ -2,6 +2,7 @@ import { NextApiHandler, NextApiRequest } from "next";
 import { SpotifyWebApi } from 'spotify-web-api-ts';
 
 import { withSessionRoute } from "@/lib/withSession";
+import { ArchiveApiResponse } from "@/types/api/user/archive";
 
 const playlistIdRegex = /^\w{22}$/
 
@@ -28,7 +29,7 @@ const getPlaylistIdFromUrl = (url:string):string => {
   return res
 }
 
-const archive:NextApiHandler = async (req, res) => {
+const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
   try {
     switch (req.method) {
       case "POST": {
@@ -36,13 +37,19 @@ const archive:NextApiHandler = async (req, res) => {
         const {playlistName,playlistId,playlistIdUrl} = req.body
         console.log("API::/user/discoverweekly/archive",{playlistName,playlistId,playlistIdUrl})
     
-        if(!playlistName) return res.status(403).json({message:"playlistName Error"});
+        if(!playlistName) return res.status(403).json({
+          code:"40301",
+          message:"playlistName Error",
+        });
     
         const targetPlaylistName:string = (playlistName as string).includes("{date}") ? (playlistName as string).replace("{date}",getDate(new Date())) : playlistName
     
         const targetPlaylistId:string = playlistId || getPlaylistIdFromUrl(playlistIdUrl)
     
-        if(!playlistIdRegex.test(targetPlaylistId)) return res.status(403).json({message:"playlistId Error"});
+        if(!playlistIdRegex.test(targetPlaylistId)) return res.status(403).json({
+          code:"40302",
+          message:"playlistId Error"
+        });
         
         const accessToken = req.session.user.accessToken
     
@@ -52,7 +59,11 @@ const archive:NextApiHandler = async (req, res) => {
         const discoverweeklyPlaylist = await spotify.playlists.getPlaylistItems(targetPlaylistId)
         const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
         const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
-        res.status(200).json({data:playlist});
+        res.status(200).json({
+          code:"200",
+          message:"success",
+          data:playlist
+        });
         break;
       }
       default:
@@ -61,7 +72,11 @@ const archive:NextApiHandler = async (req, res) => {
     }
     
   } catch (error) {
-    res.status(500).send(error.message)
+    res.status(500).send({
+      code:"500",
+      message:error.message,
+      error:error
+    })
   }
 };
 

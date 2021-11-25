@@ -1,19 +1,25 @@
 import { NextApiHandler } from "next";
-import { SpotifyWebApi } from 'spotify-web-api-ts';
 
 import { withSessionRoute } from "@/lib/withSession";
+import { StatusApiResponse } from "@/types/api/status";
 
-const status:NextApiHandler = async (req, res) => {
+const status:NextApiHandler<StatusApiResponse> = async (req, res) => {
   try {
     switch (req.method) {
       case "GET": {
         console.log("API::GET:/status")
-        res.status(200).json({message:"ok"});
+        res.status(200).json({
+          code:"200",
+          message:"success",
+        });
         break;
       }
       case "POST": {
         console.log("API::POST:/status")
-        res.status(200).json({message:"ok"});
+        res.status(200).json({
+          code:"200",
+          message:"success",
+        });
         break;
       }
     
@@ -23,7 +29,11 @@ const status:NextApiHandler = async (req, res) => {
     }
     
   } catch (error) {
-    res.status(500).send(error.message)
+    res.status(500).send({
+      code:"500",
+      message:error.message,
+      error:error
+    })
   }
 };
 

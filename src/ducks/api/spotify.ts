@@ -1,3 +1,5 @@
+import { CheckLoginApiResponse } from '@/types/api/auth/checkLogin'
+import { ArchiveApiResponse } from '@/types/api/user/archive'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Playlist } from 'spotify-web-api-ts/types/types/SpotifyObjects'
 
@@ -12,10 +14,10 @@ export const spotifyApi = createApi({
   reducerPath: 'spotifyApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api/' }),
   endpoints: (builder) => ({
-    checkLogin: builder.query<{}, void>({
+    checkLogin: builder.query<CheckLoginApiResponse, void>({
       query: () => `auth/checkLogin`,
     }),
-    discoverweeklyArchive: builder.mutation<{data:Playlist}, ArchiveParam>({
+    discoverweeklyArchive: builder.mutation<ArchiveApiResponse, ArchiveParam>({
       query: (param) => ({
         url:`user/discoverweekly/archive`,
         method:"POST",
