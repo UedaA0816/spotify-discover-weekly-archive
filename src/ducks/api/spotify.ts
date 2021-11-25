@@ -1,5 +1,6 @@
 import { CheckLoginApiResponse } from '@/types/api/auth/checkLogin'
-import { ArchiveApiResponse } from '@/types/api/user/archive'
+import { ArchiveApiResponse } from '@/types/api/user/discoverweekly/archive'
+import { AutoArchiveApiResponse } from '@/types/api/user/discoverweekly/autoArchive'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Playlist } from 'spotify-web-api-ts/types/types/SpotifyObjects'
 
@@ -8,6 +9,14 @@ type ArchiveParam = {
   playlistId?: string;
   playlistName: string;
 }
+
+type AutoArchiveParam = {
+  playlistIdUrl?: string;
+  playlistId?: string;
+  playlistName?: string;
+  enabled?:string;
+}
+
 
 // Define a service using a base URL and expected endpoints
 export const spotifyApi = createApi({
@@ -21,6 +30,13 @@ export const spotifyApi = createApi({
       query: (param) => ({
         url:`user/discoverweekly/archive`,
         method:"POST",
+        body:param
+      })
+    }),
+    discoverweeklyAutoArchive: builder.mutation<AutoArchiveApiResponse, AutoArchiveParam>({
+      query: (param) => ({
+        url:`user/discoverweekly/autoArchive`,
+        method:"PUT",
         body:param
       })
     }),

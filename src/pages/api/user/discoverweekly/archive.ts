@@ -2,7 +2,7 @@ import { NextApiHandler, NextApiRequest } from "next";
 import { SpotifyWebApi } from 'spotify-web-api-ts';
 
 import { withSessionRoute } from "@/lib/withSession";
-import { ArchiveApiResponse } from "@/types/api/user/archive";
+import { ArchiveApiResponse } from "@/types/api/user/discoverweekly/archive";
 
 const playlistIdRegex = /^\w{22}$/
 
