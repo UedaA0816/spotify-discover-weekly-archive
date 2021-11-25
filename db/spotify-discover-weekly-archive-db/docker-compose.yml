@@ -9,9 +9,8 @@ services:
     image: mongo:latest
     container_name: spotify-mongodb
     environment:
-      -  'MONGODB_USER=user' 
-      -  'MONGODB_PASS=password!'
-      -  'MONGO_INITDB_DATABASE:spotify'
+      -  'MONGO_INITDB_ROOT_USERNAME=root' 
+      -  'MONGO_INITDB_ROOT_PASSWORD=root!'
       -  'TZ=Asia/Tokyo'
     volumes:
       - 'mongodb-data:/data/db'
@@ -19,7 +18,7 @@ services:
     ports:
       - '27017:27017'
     # command: mongod --smallfiles
-    command: mongod
+    command: mongod --auth
   mongo-express:
     container_name: spotify-mongo-express
     links:
@@ -28,6 +27,10 @@ services:
       - '8081:8081'
     environment:
       - 'ME_CONFIG_OPTIONS_EDITORTHEME=ambiance'
+      - 'ME_CONFIG_MONGODB_ENABLE_ADMIN="false"'
+      - 'ME_CONFIG_MONGODB_AUTH_DATABASE=admin'
+      - 'ME_CONFIG_MONGODB_AUTH_USERNAME=root'
+      - 'ME_CONFIG_MONGODB_AUTH_PASSWORD=root!'
       - 'ME_CONFIG_BASICAUTH_USERNAME=user'
       - 'ME_CONFIG_BASICAUTH_PASSWORD=password!'
     image: mongo-express
