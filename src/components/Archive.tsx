@@ -60,7 +60,7 @@ function Archive() {
       if(!isAutoArchive){
         discoverweeklyArchive(param)
       }else{
-        axios.post("api/user/discoverweekly/autoArchive",param)
+        axios.put("api/user/discoverweekly/autoArchive",{...param,enabled:true})
       }
     } 
     ,[discoverweeklyArchive]

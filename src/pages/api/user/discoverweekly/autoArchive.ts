@@ -2,9 +2,9 @@ import { NextApiHandler, NextApiRequest } from "next";
 import { SpotifyWebApi } from 'spotify-web-api-ts';
 
 import { withSessionRoute } from "@/lib/withSession";
-import { ArchiveApiResponse } from "@/types/api/user/archive";
+import { ArchiveApiResponse } from "@/types/api/user/discoverweekly/archive";
 import { withMongo } from "@/lib/db";
-import { MONGO_DB_COLLECTION_AUTOARCHIVE } from "@/lib/common";
+import { generateRandomString, MONGO_DB_COLLECTION_AUTOARCHIVE } from "@/lib/common";
 import { AutoArchiveUser } from "@/types/db/autoArchive";
 
 const playlistIdRegex = /^\w{22}$/
@@ -35,42 +35,46 @@ const getPlaylistIdFromUrl = (url:string):string => {
 const archive:NextApiHandler = async (req, res) => {
   try {
     switch (req.method) {
-      case "POST": {
+      case "PUT": {
     
-        const {playlistName,playlistId,playlistIdUrl} = req.body
-        console.log("API::/user/discoverweekly/autoArchive",{playlistName,playlistId,playlistIdUrl})
+        const {playlistName,playlistId,playlistIdUrl,enabled} = req.body
+        console.log("API::PUT:/user/discoverweekly/autoArchive",{playlistName,playlistId,playlistIdUrl,enabled})
+
+        const targetPlaylistName:string = playlistName
+        const targetPlaylistId:string = playlistId || (playlistIdUrl && getPlaylistIdFromUrl(playlistIdUrl))
     
-        // if(!playlistName) return res.status(403).json({
-        //   code:"40301",
-        //   message:"playlistName Error",
-        // });
-    
-        // const targetPlaylistName:string = (playlistName as string).includes("{date}") ? (playlistName as string).replace("{date}",getDate(new Date())) : playlistName
-    
-        // const targetPlaylistId:string = playlistId || getPlaylistIdFromUrl(playlistIdUrl)
-    
-        // if(!playlistIdRegex.test(targetPlaylistId)) return res.status(403).json({
-        //   code:"40302",
-        //   message:"playlistId Error"
-        // });
+        if(targetPlaylistId !== undefined && !playlistIdRegex.test(targetPlaylistId)) return res.status(403).json({
+          code:"40302",
+          message:"playlistId Error"
+        });
         
-        // const accessToken = req.session.user.accessToken
+        const {accessToken,refreshToken} = req.session.user
     
-        // const spotify = new SpotifyWebApi({ accessToken });
-        // const me = await spotify.users.getMe()
-    
-        // const discoverweeklyPlaylist = await spotify.playlists.getPlaylistItems(targetPlaylistId)
-        // const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
-        // const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
+        const spotify = new SpotifyWebApi({ accessToken });
+        const me = await spotify.users.getMe()
         
-        const autoArchiveUsers = await withMongo(async (db) => {
-          return db.collection<AutoArchiveUser>(MONGO_DB_COLLECTION_AUTOARCHIVE).find().toArray()
+        const autoArchiveUser = await withMongo(async (db) => {
+          
+          const param = {
+            ...(enabled !== undefined ? {enabled} : {}),
+            ...(targetPlaylistId ? {playlistId:targetPlaylistId} : {}),
+            ...(targetPlaylistName ? {playlistName:targetPlaylistName} : {}),
+            refreshToken:refreshToken,
+            updatedAt:new Date()
+          }
+          
+          return db.collection<AutoArchiveUser>(MONGO_DB_COLLECTION_AUTOARCHIVE).findOneAndUpdate({"userId":me.id},{"$set":param},{"upsert":true,"returnDocument":"after"})
         })
-        console.log({autoArchiveUsers})
+        if(!autoArchiveUser.ok) return res.status(500).json({
+          code:"500",
+          message:"DB upsert error",
+          error:autoArchiveUser.lastErrorObject
+        });
+        console.log({autoArchiveUser})
         res.status(200).json({
           code:"200",
           message:"success",
-          data:autoArchiveUsers
+          data:autoArchiveUser.value
         });
         break;
       }
