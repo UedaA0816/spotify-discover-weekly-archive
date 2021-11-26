@@ -73,4 +73,4 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
   }
 };
 
-export default withSessionRoute(archive);
+export default archive;
