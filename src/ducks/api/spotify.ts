@@ -14,7 +14,7 @@ type AutoArchiveParam = {
   playlistIdUrl?: string;
   playlistId?: string;
   playlistName?: string;
-  enabled?:string;
+  enabled?:boolean;
 }
 
 
@@ -45,4 +45,4 @@ export const spotifyApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useCheckLoginQuery, useDiscoverweeklyArchiveMutation } = spotifyApi
+export const { useCheckLoginQuery, useDiscoverweeklyArchiveMutation, useDiscoverweeklyAutoArchiveMutation } = spotifyApi
