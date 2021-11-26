@@ -12,9 +12,10 @@ type PendingButtonProps = {
   errorElement:ReactNode,
   successElement:ReactNode,
   disabledReady?:boolean,
+  disabled?:boolean,
 }
 
-const PendingButton:React.FC<PendingButtonProps> = ({children,onClick,className,isLoading,isError,isSuccess,loadingElement = <LoadingSpinner size={20} />,successElement,errorElement,disabledReady = false})=>{
+const PendingButton:React.FC<PendingButtonProps> = ({children,onClick,className,isLoading,isError,isSuccess,loadingElement = <LoadingSpinner size={20} />,successElement,errorElement,disabledReady = false,disabled})=>{
   const [isReadySubmit, setIsReadySubmit] = useState(true)
 
   return(
@@ -26,6 +27,7 @@ const PendingButton:React.FC<PendingButtonProps> = ({children,onClick,className,
         } : () => { if (!disabledReady) setIsReadySubmit(true) }
       }
       className={" "+className}
+      disabled={disabled}
     >
       {isReadySubmit ? children :
         isLoading ? loadingElement :
