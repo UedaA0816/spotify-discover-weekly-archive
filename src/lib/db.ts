@@ -1,6 +1,9 @@
 import { Db, MongoClient, MongoClientOptions } from 'mongodb'
 
-let cached = global.mongo
+let cached:{
+  conn: { client: MongoClient; db: Db },
+  promise: Promise<{ client: MongoClient; db: Db }>
+} = global.mongo
 
 if (!cached) {
   cached = global.mongo = { conn: null, promise: null }
@@ -22,8 +25,14 @@ const connectToDatabase = async (): Promise<{ client: MongoClient; db: Db }> => 
       }
     })
   }
-  cached.conn = await cached.promise
-  return cached.conn
+  try {
+    cached.conn = await cached.promise
+    return cached.conn
+  } catch (error) {
+    console.error(error)
+    cached = global.mongo = { conn: null, promise: null }
+    return Promise.reject(error)
+  }
 }
 
 export async function withMongo<T>(fn: (db: Db) => Promise<T>): Promise<T> {
