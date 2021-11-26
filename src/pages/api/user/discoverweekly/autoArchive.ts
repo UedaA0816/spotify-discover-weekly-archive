@@ -33,12 +33,12 @@ const getPlaylistIdFromUrl = (url:string):string => {
 }
 
 const archive:NextApiHandler = async (req, res) => {
+  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
   try {
     switch (req.method) {
       case "PUT": {
     
         const {playlistName,playlistId,playlistIdUrl,enabled} = req.body
-        console.log("API::PUT:/user/discoverweekly/autoArchive",{playlistName,playlistId,playlistIdUrl,enabled})
 
         const targetPlaylistName:string = playlistName
         const targetPlaylistId:string = playlistId || (playlistIdUrl && getPlaylistIdFromUrl(playlistIdUrl))

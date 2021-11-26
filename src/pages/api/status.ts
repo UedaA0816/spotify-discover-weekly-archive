@@ -4,10 +4,11 @@ import { withSessionRoute } from "@/lib/withSession";
 import { StatusApiResponse } from "@/types/api/status";
 
 const status:NextApiHandler<StatusApiResponse> = async (req, res) => {
+  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
   try {
     switch (req.method) {
       case "GET": {
-        console.log("API::GET:/status")
+        
         res.status(200).json({
           code:"200",
           message:"success",
@@ -15,7 +16,7 @@ const status:NextApiHandler<StatusApiResponse> = async (req, res) => {
         break;
       }
       case "POST": {
-        console.log("API::POST:/status")
+        
         res.status(200).json({
           code:"200",
           message:"success",

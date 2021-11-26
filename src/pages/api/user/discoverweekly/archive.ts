@@ -30,6 +30,7 @@ const getPlaylistIdFromUrl = (url:string):string => {
 }
 
 const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
+  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
   try {
     switch (req.method) {
       case "POST": {

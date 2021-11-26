@@ -6,8 +6,8 @@ import { CheckLoginApiResponse } from "@/types/api/auth/checkLogin";
 
 
 const checkLogin: NextApiHandler<CheckLoginApiResponse> = async (req, res) => {
+  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
   try {
-    console.log("API::/auth/checkLogin")
     const {accessToken,refreshToken} = req.session.user || {}
     if(!accessToken || !refreshToken) return res.status(401).json({
       code:"40101",

@@ -5,10 +5,10 @@ import { withSessionRoute } from "@/lib/withSession";
 import { MeApiResponse } from "@/types/api/me";
 
 const me:NextApiHandler<MeApiResponse> = async (req, res) => {
+  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
   try {
     switch (req.method) {
       case "GET": {
-        console.log("API::/me")
         const accessToken = req.session.user.accessToken
 
         const spotify = new SpotifyWebApi({ accessToken });
