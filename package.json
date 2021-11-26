@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "spotify-discover-weekly-archive",
   "private": true,
   "scripts": {
     "dev": "next dev",
