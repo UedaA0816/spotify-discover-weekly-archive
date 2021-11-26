@@ -1,6 +1,3 @@
-import { setData } from '@/ducks/archiveForm/actions';
-import { useArchiveFormState } from '@/ducks/archiveForm/selector';
-import { ArchiveFormData } from '@/ducks/archiveForm/slice';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -14,40 +11,33 @@ import OutLink from './OutLink';
 import { useDiscoverweeklyAutoArchiveMutation, useDiscoverweeklyAutoArchiveUserQuery } from '@/ducks/api/spotify';
 import PendingButton from './PendingButton';
 
+type ArchiveForm = {
+  playlistName: string;
+  playlistIdOrUrl: string;
+  isUrl:boolean;
+};
 
 function Archive() {
-  const { register, watch, setValue, handleSubmit, formState: { errors } , } = useForm<ArchiveFormData>({defaultValues:{playlistName:"Discover Weekly {date}"}});
+  const { register, watch, setValue, handleSubmit, formState: { errors } , } = useForm<ArchiveForm>({defaultValues:{playlistName:"Discover Weekly {date}"}});
 
-  const data = useArchiveFormState()
-  const dispatch = useDispatch()
-
-  const [initData, setInitData] = useState(false)
   const {data:autoArchiveUser,isFetching:isFetchingAutoArchiveUser} = useDiscoverweeklyAutoArchiveUserQuery()
 
   useEffect(() => {
     
-    if(data !== null && !initData) {
-      setValue("isUrl",data.isUrl)
-      setValue("playlistIdOrUrl",data.playlistIdOrUrl)
-      setValue("playlistName",data.playlistName)
-      setInitData(true)
+    if(autoArchiveUser?.data){
+      const {playlistId,playlistName} = autoArchiveUser.data.table
+
+      setValue("playlistIdOrUrl",playlistId)
+      setValue("playlistName",playlistName)
+      setValue("isUrl",false)
+
     }
     
-  }, [data,initData])
-
-  const updateFormData = debounce((data:ArchiveFormData)=>dispatch(setData(data)),1000)
-
-  useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      console.log(value, name, type)
-      if(type === "change") updateFormData((value as any))
-    });
-    return () => subscription.unsubscribe();
-  }, [watch])
+  }, [autoArchiveUser])
 
   const [discoverweeklyAutoArchive,{isLoading:isLoadingAutoArchive,isError:isErrorAutoArchive,isSuccess:isSuccessAutoArchive}] = useDiscoverweeklyAutoArchiveMutation()
 
-  const handleArchive = (data:ArchiveFormData) => {
+  const handleArchive = (data:ArchiveForm) => {
     console.log(data)
 
     const {playlistName,playlistIdOrUrl,isUrl} = data
