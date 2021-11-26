@@ -23,20 +23,13 @@ const getDate = (date:Date) => {
   return `${fullyear(WeekStart)}/${month(WeekStart)}/${day(WeekStart)}`
 }
 
-const getPlaylistIdFromUrl = (url:string):string => {
-  const num = url.search(/playlist\//) + 9
-  const res = url.slice(num,num+22)
-  return res
-}
-
 const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
   console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
   try {
     switch (req.method) {
       case "POST": {
     
-        const {playlistName,playlistId,playlistIdUrl} = req.body
-        console.log("API::/user/discoverweekly/archive",{playlistName,playlistId,playlistIdUrl})
+        const {playlistName,playlistId,accessToken} = req.body
     
         if(!playlistName) return res.status(403).json({
           code:"40301",
@@ -45,15 +38,13 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
     
         const targetPlaylistName:string = (playlistName as string).includes("{date}") ? (playlistName as string).replace("{date}",getDate(new Date())) : playlistName
     
-        const targetPlaylistId:string = playlistId || getPlaylistIdFromUrl(playlistIdUrl)
+        const targetPlaylistId:string = playlistId
     
         if(!playlistIdRegex.test(targetPlaylistId)) return res.status(403).json({
           code:"40302",
           message:"playlistId Error"
         });
         
-        const accessToken = req.session.user.accessToken
-    
         const spotify = new SpotifyWebApi({ accessToken });
         const me = await spotify.users.getMe()
     

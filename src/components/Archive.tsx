@@ -11,8 +11,8 @@ import Button from './Button';
 import Tooltip from './Tooltip';
 import TooltipIcon from './TooltipIcon';
 import OutLink from './OutLink';
-import LoadingSpinner from './LoadingSpinner';
-import { useDiscoverweeklyArchiveMutation } from '@/ducks/api/spotify';
+import { useDiscoverweeklyAutoArchiveMutation, useDiscoverweeklyAutoArchiveUserQuery } from '@/ducks/api/spotify';
+import PendingButton from './PendingButton';
 
 
 function Archive() {
@@ -22,6 +22,7 @@ function Archive() {
   const dispatch = useDispatch()
 
   const [initData, setInitData] = useState(false)
+  const {data:autoArchiveUser,isFetching:isFetchingAutoArchiveUser} = useDiscoverweeklyAutoArchiveUserQuery()
 
   useEffect(() => {
     
@@ -44,27 +45,20 @@ function Archive() {
     return () => subscription.unsubscribe();
   }, [watch])
 
-  const [isReadyArchiveSubmit, setIsReadyArchiveSubmit] = useState(true)
-  const [discoverweeklyArchive,{isLoading:isLoadingArchive,isError:isErrorArchive,isSuccess:isSuccessArchive}] = useDiscoverweeklyArchiveMutation()
+  const [discoverweeklyAutoArchive,{isLoading:isLoadingAutoArchive,isError:isErrorAutoArchive,isSuccess:isSuccessAutoArchive}] = useDiscoverweeklyAutoArchiveMutation()
 
-  const handleArchive = useCallback(
-    (isAutoArchive:boolean) => (data:ArchiveFormData) => {
-      console.log(data)
-  
-      const {playlistName,playlistIdOrUrl,isUrl} = data
-      const param = {
-        playlistName,
-        ...(!isUrl ? {playlistId:playlistIdOrUrl} : {}),
-        ...(isUrl ? {playlistIdUrl:playlistIdOrUrl} : {})
-      }
-      if(!isAutoArchive){
-        discoverweeklyArchive(param)
-      }else{
-        axios.put("api/user/discoverweekly/autoArchive",{...param,enabled:true})
-      }
-    } 
-    ,[discoverweeklyArchive]
-  )
+  const handleArchive = (data:ArchiveFormData) => {
+    console.log(data)
+
+    const {playlistName,playlistIdOrUrl,isUrl} = data
+    const param = {
+      playlistName,
+      ...(!isUrl ? {playlistId:playlistIdOrUrl} : {}),
+      ...(isUrl ? {playlistIdUrl:playlistIdOrUrl} : {})
+    }
+    
+    discoverweeklyAutoArchive({...param,enabled:true,isInit:(autoArchiveUser?.data?.table == null)})
+  } 
 
   const playlistNameTooltip = `
   If you want to include the date in the name, write {date}.
@@ -104,22 +98,17 @@ function Archive() {
           </div>
         </div>
         <div className=" flex justify-end gap-4">
-          <Button className="" onClick={handleSubmit(handleArchive(true))}>Auto Archive</Button>
-          <Button 
-            onClick={
-              isReadyArchiveSubmit ? ()=> {
-                handleSubmit(handleArchive(false))()
-                setIsReadyArchiveSubmit(false)
-              } : ()=>{if(!isLoadingArchive)setIsReadyArchiveSubmit(true)}
-            }
-            className=" w-24"
+          <PendingButton 
+            onClick={handleSubmit(handleArchive)}
+            className=" w-32"
+            isLoading={isLoadingAutoArchive}
+            isError={isErrorAutoArchive}
+            isSuccess={isSuccessAutoArchive}
+            errorElement={"Error!"}
+            successElement={"Success!"}
           >
-            { isReadyArchiveSubmit ? "Archive" : 
-              isLoadingArchive ? <LoadingSpinner size={20} /> :
-              isErrorArchive ? "Error!" :
-              isSuccessArchive ? "Success!" : ""
-            }
-          </Button>
+            {(autoArchiveUser?.data?.table == null) ? "Auto Archive" : "Update"} 
+          </PendingButton>
         </div>
       </form>
     </div>
