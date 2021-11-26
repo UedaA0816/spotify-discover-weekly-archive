@@ -8,12 +8,13 @@ const LoadingSpinner: React.VFC<{size?:number}> = ({size = 112}) => {
       loader
       ease-linear
       rounded-full
-      border-8 border-t-8 border-gray-200
+      border-gray-200
       animate-spin
       m-auto
     "
       style={{
         borderTopColor: "#1ed760",
+        borderWidth:(size * 0.0715),
         height:size,
         width:size
       }}
