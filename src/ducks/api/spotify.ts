@@ -15,7 +15,7 @@ type AutoArchiveParam = {
   playlistId?: string;
   playlistName?: string;
   enabled?:boolean;
-  isInit:boolean
+  isNotRegistered:boolean
 }
 
 

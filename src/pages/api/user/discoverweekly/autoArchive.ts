@@ -67,7 +67,7 @@ const autoArchive:NextApiHandler<AutoArchiveApiResponse> = async (req, res) => {
       }
       case "PUT": {
     
-        const {playlistName,playlistId,playlistIdUrl,enabled,isInit} = req.body
+        const {playlistName,playlistId,playlistIdUrl,enabled,isNotRegistered} = req.body
 
         const targetPlaylistName:string = playlistName
         const targetPlaylistId:string = playlistId || (playlistIdUrl && getPlaylistIdFromUrl(playlistIdUrl))
@@ -100,8 +100,7 @@ const autoArchive:NextApiHandler<AutoArchiveApiResponse> = async (req, res) => {
           error:autoArchiveUser.lastErrorObject
         });
         
-        console.log(req.url)
-        if(isInit){
+        if(isNotRegistered){
           const url = new URL(process.env.SPOTIFY_API_REDIRECT_URI)
           
           const archive = await axios.post<ArchiveApiResponse>(`${url.origin}/api/user/discoverweekly/archive`,{

@@ -57,7 +57,7 @@ function Archive() {
       ...(isUrl ? {playlistIdUrl:playlistIdOrUrl} : {})
     }
     
-    discoverweeklyAutoArchive({...param,enabled:true,isInit:(autoArchiveUser?.data?.table == null)})
+    discoverweeklyAutoArchive({...param,enabled:true,isNotRegistered:(autoArchiveUser?.data?.table == null)})
   } 
 
   const playlistNameTooltip = `
