@@ -26,10 +26,10 @@ function Archive() {
 
   useEffect(() => {
     
+    if(autoArchiveUser !== undefined) setDisabled(false)
     if(autoArchiveUser?.data?.table){
       const {playlistId,playlistName} = autoArchiveUser.data.table
 
-      setDisabled(false)
       setValue("playlistIdOrUrl",playlistId)
       setValue("playlistName",playlistName)
       setValue("isUrl",false)
