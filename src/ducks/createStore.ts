@@ -51,7 +51,7 @@ const createStore = () => {
             ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
           },
         }),
-        logger,
+        ...(process.env.NODE_ENV !== 'production' ? [logger] : []),
         spotifyApi.middleware,
       ]
     ),
