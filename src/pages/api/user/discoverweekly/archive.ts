@@ -2,6 +2,10 @@ import { NextApiHandler, NextApiRequest } from "next";
 import { SpotifyWebApi } from 'spotify-web-api-ts';
 
 import { withSessionRoute } from "@/lib/withSession";
+import { ArchiveApiResponse } from "@/types/api/user/discoverweekly/archive";
+import { withMongo } from "@/lib/db";
+import { AutoArchiveHistory } from "@/types/db/autoArchiveHistory";
+import { MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY } from "@/lib/common";
 
 const playlistIdRegex = /^\w{22}$/
 
@@ -22,37 +26,71 @@ const getDate = (date:Date) => {
   return `${fullyear(WeekStart)}/${month(WeekStart)}/${day(WeekStart)}`
 }
 
-const getPlaylistIdFromUrl = (url:string):string => {
-  const num = url.search(/playlist\//) + 9
-  const res = url.slice(num,num+22)
-  return res
-}
-
-const archive:NextApiHandler = async (req, res) => {
+const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
+  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
   try {
     switch (req.method) {
       case "POST": {
     
-        const {playlistName,playlistId,playlistIdUrl} = req.body
-        console.log("API::/user/discoverweekly/archive",{playlistName,playlistId,playlistIdUrl})
+        const {playlistName,playlistId,accessToken} = req.body
     
-        if(!playlistName) return res.status(403).json({message:"playlistName Error"});
+        if(!playlistName) return res.status(403).json({
+          code:"40301",
+          message:"playlistName Error",
+        });
     
         const targetPlaylistName:string = (playlistName as string).includes("{date}") ? (playlistName as string).replace("{date}",getDate(new Date())) : playlistName
     
-        const targetPlaylistId:string = playlistId || getPlaylistIdFromUrl(playlistIdUrl)
+        const targetPlaylistId:string = playlistId
     
-        if(!playlistIdRegex.test(targetPlaylistId)) return res.status(403).json({message:"playlistId Error"});
-        
-        const accessToken = req.session.user.accessToken
-    
+        if(!playlistIdRegex.test(targetPlaylistId)) return res.status(403).json({
+          code:"40302",
+          message:"playlistId Error"
+        });
+
         const spotify = new SpotifyWebApi({ accessToken });
         const me = await spotify.users.getMe()
-    
-        const discoverweeklyPlaylist = await spotify.playlists.getPlaylistItems(targetPlaylistId)
-        const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
-        const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
-        res.status(200).json({data:playlist});
+        try {
+      
+          const discoverweeklyPlaylist = await spotify.playlists.getPlaylistItems(targetPlaylistId)
+          const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
+          const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
+
+          const history = {
+            userId:me.id,
+            playlistName:playlist.name,
+            playlistId:playlist.id,
+            createdAt:new Date(),
+            success:true
+          }
+          await withMongo(async (db) => {
+            return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
+          })
+
+          res.status(200).json({
+            code:"200",
+            message:"success",
+            data:playlist
+          });
+          
+        } catch (error) {
+          //TODO DB登録処理
+          console.error("DB登録処理失敗",error)
+          const history = {
+            userId:me.id,
+            createdAt:new Date(),
+            success:false
+          }
+          await withMongo(async (db) => {
+            return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
+          })
+          res.status(500).send({
+            code:"500",
+            message:error.message,
+            error:error
+          })
+        }
+        
         break;
       }
       default:
@@ -61,8 +99,13 @@ const archive:NextApiHandler = async (req, res) => {
     }
     
   } catch (error) {
-    res.status(500).send(error.message)
+    console.error(error)
+    res.status(500).send({
+      code:"500",
+      message:error.message,
+      error:error
+    })
   }
 };
 
-export default withSessionRoute(archive);
+export default archive;

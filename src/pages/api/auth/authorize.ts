@@ -1,18 +1,14 @@
 import axios from "axios";
 import { NextApiHandler } from "next";
 import { withSessionRoute } from "@/lib/withSession";
+import { AuthorizeApiResponse, SpotifyAuthorizeApiResponse } from "@/types/api/auth/authorize";
 
-type SpotifyAuthApiResponse = {
-  access_token: string,
-  token_type: string,
-  scope: string,
-  expires_in: number,
-  refresh_token: string
-}
 
-const authorize: NextApiHandler = async (req, res) => {
+
+const authorize: NextApiHandler<AuthorizeApiResponse> = async (req, res) => {
+  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
   try {
-    console.log("API::/auth/authorize")
+    
     const { code, state } = req.query;
   
     const params = new URLSearchParams();
@@ -20,7 +16,7 @@ const authorize: NextApiHandler = async (req, res) => {
     params.append('code', code as string);
     params.append('redirect_uri', process.env.SPOTIFY_API_REDIRECT_URI);
   
-    const response = await axios.post<SpotifyAuthApiResponse>(
+    const response = await axios.post<SpotifyAuthorizeApiResponse>(
       'https://accounts.spotify.com/api/token',
       params,
       {
@@ -40,7 +36,12 @@ const authorize: NextApiHandler = async (req, res) => {
     res.status(200).redirect(`/?login=${state}`);
     
   } catch (error) {
-    res.status(500).send(error.message)
+    console.error(error)
+    res.status(500).send({
+      code:"500",
+      message:error.message,
+      error:error
+    })
   }
 };
 

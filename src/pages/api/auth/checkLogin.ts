@@ -2,18 +2,26 @@ import axios from "axios";
 import { NextApiHandler } from "next";
 import { withSessionRoute } from "@/lib/withSession";
 import { SpotifyWebApi } from "spotify-web-api-ts";
+import { CheckLoginApiResponse } from "@/types/api/auth/checkLogin";
 
 
-const checkLogin: NextApiHandler = async (req, res) => {
+const checkLogin: NextApiHandler<CheckLoginApiResponse> = async (req, res) => {
+  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
   try {
-    console.log("API::/auth/checkLogin")
     const {accessToken,refreshToken} = req.session.user || {}
-    if(!accessToken || !refreshToken) return res.status(401).json({message:"session token Error"});
+    if(!accessToken || !refreshToken) return res.status(401).json({
+      code:"40101",
+      message:"session token Error",
+      data:{}
+    });
     try {
       const spotify = new SpotifyWebApi({ accessToken });
       await spotify.users.getMe()
-      res.status(200);
-      res.json({});
+      res.status(200).json({
+        code:"200",
+        message:"success",
+        data:{}
+      })
     } catch (error) {
       if(refreshToken){
         try {
@@ -24,20 +32,39 @@ const checkLogin: NextApiHandler = async (req, res) => {
           req.session.user.accessToken = response.access_token
           await req.session.save()
           res.status(200);
-          res.json({message:"accessToken refreshed"});
+          res.json({
+            code:"200",
+            message:"accessToken refreshed",
+            data:{}
+          });
         } catch (error) {
           await req.session.destroy()
           res.status(401)
-          res.json({ message: 'unauthorized',error:error });
+          res.json({
+            code:"40102",
+            message: 'unauthorized',
+            data:{},
+            error:error
+          });
         }
       }else{
         await req.session.destroy()
         res.status(401)
-        res.json({ message: 'unauthorized',error:"refreshToken not found" });
+        res.json({ 
+          code:"40102",
+          message: 'unauthorized',
+          data:{},
+          error:"refreshToken not found"
+         });
       }
     }    
   } catch (error) {
-    res.status(500).send(error.message)
+    console.error(error)
+    res.status(500).send({
+      code:"500",
+      message:error.message,
+      error:error
+    })
   }
 };
 

@@ -7,3 +7,7 @@ export const generateRandomString = function(length:number) {
   }
   return text;
 };
+
+
+export const MONGO_DB_COLLECTION_AUTOARCHIVE = "auto_archive"
+export const MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY = "auto_archive_history"
