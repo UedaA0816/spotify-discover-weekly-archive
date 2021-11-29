@@ -24,7 +24,7 @@ function Archive() {
 
   useEffect(() => {
     
-    if(autoArchiveUser?.data){
+    if(autoArchiveUser?.data?.table){
       const {playlistId,playlistName} = autoArchiveUser.data.table
 
       setValue("playlistIdOrUrl",playlistId)
@@ -97,7 +97,7 @@ function Archive() {
             errorElement={"Error!"}
             successElement={"Success!"}
           >
-            {(autoArchiveUser?.data?.table == null) ? "Auto Archive" : "Update"} 
+            {(autoArchiveUser?.data?.table == null) ? "Register" : "Update"} 
           </PendingButton>
         </div>
       </form>
