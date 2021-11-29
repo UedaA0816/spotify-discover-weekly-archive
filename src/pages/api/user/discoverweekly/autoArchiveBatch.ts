@@ -16,7 +16,13 @@ const autoArchiveBatch:NextApiHandler = async (req, res) => {
     switch (req.method) {
       case "POST": {
     
-        const {} = req.body
+        const {commonKey} = req.body
+        const currentCommonKey = process.env.API_BATCH_COMMONKEY
+  
+        if(!(commonKey && currentCommonKey && commonKey === currentCommonKey)) return res.status(401).json({
+          code:"40100",
+          message:"CommonKey Error"
+        });
 
         setTimeout(async ()=>{
           const clientId = process.env.SPOTIFY_API_CLIENT_ID
@@ -66,8 +72,6 @@ const autoArchiveBatch:NextApiHandler = async (req, res) => {
 
           }while(hasNext)
   
-
-
         },0)
 
         // console.log("!!!!!!!!!!!",new Date())
