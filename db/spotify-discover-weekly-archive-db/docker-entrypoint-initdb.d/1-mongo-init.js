@@ -21,14 +21,13 @@ db.auto_archive.createIndex(
     unique:true
   }
 )
+  
+db.createCollection('auto_archive_history');
 
-db.auto_archive.insertMany([
+db.auto_archive_history.createIndex(
   {
-    userId:"wetti0816",
-    enabled:null,
-  },
-  {
-    userId:"test1",
-    enabled:true,
-  },
-])
+    userId:1,
+    createdAt:1
+  }
+)
+

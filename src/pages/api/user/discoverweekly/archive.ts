@@ -3,6 +3,9 @@ import { SpotifyWebApi } from 'spotify-web-api-ts';
 
 import { withSessionRoute } from "@/lib/withSession";
 import { ArchiveApiResponse } from "@/types/api/user/discoverweekly/archive";
+import { withMongo } from "@/lib/db";
+import { AutoArchiveHistory } from "@/types/db/autoArchiveHistory";
+import { MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY } from "@/lib/common";
 
 const playlistIdRegex = /^\w{22}$/
 
@@ -44,18 +47,50 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
           code:"40302",
           message:"playlistId Error"
         });
-        
+
         const spotify = new SpotifyWebApi({ accessToken });
         const me = await spotify.users.getMe()
-    
-        const discoverweeklyPlaylist = await spotify.playlists.getPlaylistItems(targetPlaylistId)
-        const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
-        const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
-        res.status(200).json({
-          code:"200",
-          message:"success",
-          data:playlist
-        });
+        try {
+      
+          const discoverweeklyPlaylist = await spotify.playlists.getPlaylistItems(targetPlaylistId)
+          const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
+          const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
+
+          const history = {
+            userId:me.id,
+            playlistName:playlist.name,
+            playlistId:playlist.id,
+            createdAt:new Date(),
+            success:true
+          }
+          await withMongo(async (db) => {
+            return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
+          })
+
+          res.status(200).json({
+            code:"200",
+            message:"success",
+            data:playlist
+          });
+          
+        } catch (error) {
+          //TODO DB登録処理
+          console.error("DB登録処理失敗",error)
+          const history = {
+            userId:me.id,
+            createdAt:new Date(),
+            success:false
+          }
+          await withMongo(async (db) => {
+            return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
+          })
+          res.status(500).send({
+            code:"500",
+            message:error.message,
+            error:error
+          })
+        }
+        
         break;
       }
       default:
@@ -73,4 +108,4 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
   }
 };
 
-export default withSessionRoute(archive);
+export default archive;

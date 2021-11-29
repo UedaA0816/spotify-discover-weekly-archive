@@ -22,15 +22,17 @@ function Archive() {
 
   const {data:autoArchiveUser,isFetching:isFetchingAutoArchiveUser} = useDiscoverweeklyAutoArchiveUserQuery()
 
+  const [disabled, setDisabled] = useState(true)
+
   useEffect(() => {
     
-    if(autoArchiveUser?.data){
+    if(autoArchiveUser !== undefined) setDisabled(false)
+    if(autoArchiveUser?.data?.table){
       const {playlistId,playlistName} = autoArchiveUser.data.table
 
       setValue("playlistIdOrUrl",playlistId)
       setValue("playlistName",playlistName)
       setValue("isUrl",false)
-
     }
     
   }, [autoArchiveUser])
@@ -60,7 +62,7 @@ function Archive() {
   `
 
   return (
-    <div className="w-[290px] sm:w-[400px] md:w-[500px]">
+    <div className={"w-[290px] sm:w-[400px] md:w-[500px] transition-opacity "+(disabled ? "opacity-50" : "")}>
       <h1 className="mb-4 font-bold text-xl tracking-wider">ARCHIVE <OutLink className=" text-xs ms:text-sm sm:ml-8 md:ml-32 " href="https://open.spotify.com/genre/discover-page" icon>Open Spotify Web Player</OutLink></h1>
       <form className="px-2">
         <div className="mb-6">
@@ -91,13 +93,14 @@ function Archive() {
           <PendingButton 
             onClick={handleSubmit(handleArchive)}
             className=" w-32"
+            disabled={disabled}
             isLoading={isLoadingAutoArchive}
             isError={isErrorAutoArchive}
             isSuccess={isSuccessAutoArchive}
             errorElement={"Error!"}
             successElement={"Success!"}
           >
-            {(autoArchiveUser?.data?.table == null) ? "Auto Archive" : "Update"} 
+            {(autoArchiveUser?.data?.table == null) ? "Register" : "Update"} 
           </PendingButton>
         </div>
       </form>

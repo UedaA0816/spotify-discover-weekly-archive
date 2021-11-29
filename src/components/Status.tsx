@@ -42,7 +42,7 @@ function Status() {
   } 
 
   return (
-    <div className={"w-[290px] sm:w-[400px] md:w-[500px] "+(disabled && "opacity-50" )}>
+    <div className={"w-[290px] sm:w-[400px] md:w-[500px] transition-opacity "+(disabled ? "opacity-50" : "")}>
       <h1 className="mb-4 font-bold text-xl tracking-wider">Status</h1>
       <form className="px-2">
         <div className="flex items-start mb-6">
