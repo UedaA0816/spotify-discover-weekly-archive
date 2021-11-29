@@ -4,11 +4,12 @@ import { SpotifyWebApi } from 'spotify-web-api-ts';
 import { withSessionRoute } from "@/lib/withSession";
 import { ArchiveApiResponse } from "@/types/api/user/discoverweekly/archive";
 import { withMongo } from "@/lib/db";
-import { generateRandomString, MONGO_DB_COLLECTION_AUTOARCHIVE } from "@/lib/common";
+import { generateRandomString, MONGO_DB_COLLECTION_AUTOARCHIVE, MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY } from "@/lib/common";
 import { AutoArchiveUser } from "@/types/db/autoArchive";
 import { AutoArchiveApiResponse } from "@/types/api/user/discoverweekly/autoArchive";
 import { WithId } from "mongodb";
 import axios from "axios";
+import { AutoArchiveHistory } from "@/types/db/autoArchiveHistory";
 
 const autoArchiveBatch:NextApiHandler = async (req, res) => {
   console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
@@ -57,12 +58,8 @@ const autoArchiveBatch:NextApiHandler = async (req, res) => {
                   accessToken:response.access_token
                 })
 
-                //TODO DB登録処理
-                console.log("DB登録処理",archive.data.data.href)
-                // console.log("DB登録処理",user.userId)
               } catch (error) {
-                //TODO DB登録処理
-                console.log("DB登録処理失敗",error)
+                console.error(error)
               }
             }
 
