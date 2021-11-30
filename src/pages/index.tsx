@@ -1,12 +1,21 @@
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
 import Main from '@/components/Main'
+import { NextSeo } from 'next-seo';
 
 export default function Home({ loginPath }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
-    <div className=" bg-gradient-to-t to-gray-900 via-gray-900 from-black  text-white h-screen">
-      <Main loginPath={loginPath}/>
-    </div>
+    <>
+      <NextSeo
+        defaultTitle="Spotify Archive"
+        titleTemplate="%s | Spotify Archive"
+        description="Spotigfy Discover Weekly Archive."
+        canonical="https://spotify-discoverweekly-archive.herokuapp.com/"
+      />
+      <div className=" bg-gradient-to-t to-gray-900 via-gray-900 from-black  text-white h-screen">
+        <Main loginPath={loginPath}/>
+      </div>
+    </>
   )
 }
 
