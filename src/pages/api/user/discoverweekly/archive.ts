@@ -38,8 +38,8 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
           code:"40301",
           message:"playlistName Error",
         });
-    
-        const targetPlaylistName:string = (playlistName as string).includes("{date}") ? (playlistName as string).replace("{date}",getDate(new Date())) : playlistName
+        const weekDate = getDate(new Date())
+        const targetPlaylistName:string = (playlistName as string).includes("{date}") ? (playlistName as string).replace("{date}",weekDate) : playlistName
     
         const targetPlaylistId:string = playlistId
     
@@ -61,7 +61,8 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
             playlistName:playlist.name,
             playlistId:playlist.id,
             createdAt:new Date(),
-            success:true
+            success:true,
+            week:weekDate,
           }
           await withMongo(async (db) => {
             return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
@@ -79,7 +80,8 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
           const history = {
             userId:me.id,
             createdAt:new Date(),
-            success:false
+            success:false,
+            week:weekDate,
           }
           await withMongo(async (db) => {
             return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
