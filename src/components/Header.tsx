@@ -32,7 +32,7 @@ function Header({loginPath}:{loginPath:string}){
   }
   return(
     <header className=" flex items-center border-b border-gray-600 h-14 p-2">
-      <div className="flex-grow text-sm sm:text-lg font-bold whitespace-nowrap overflow-scroll">
+      <div className="flex-grow text-sm sm:text-lg font-bold whitespace-nowrap overflow-y-scroll">
         Spotify Discover Weekly Archive 
         {user && <span className="sm:ml-4 block sm:inline">ID:{user?.display_name}</span>}
       </div>
