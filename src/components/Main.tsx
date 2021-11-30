@@ -10,6 +10,7 @@ import { useUserState } from '@/ducks/user/selector';
 import { PrivateUser } from 'spotify-web-api-ts/types/types/SpotifyObjects';
 import { setUser } from '@/ducks/user/actions';
 import { MeApiResponse } from '@/types/api/me';
+import { NextSeo } from 'next-seo';
 
 function Main({loginPath}:{loginPath:string}) {
   
@@ -41,12 +42,17 @@ function Main({loginPath}:{loginPath:string}) {
   }, [login])
   
   return (
-    <div className="h-screen flex flex-col">
-      <Header loginPath={loginPath} />
-      <div className="flex-grow px-4 sm:px-8 overflow-y-scroll overflow-x-hidden">
-        {user ? <Home /> : <Welcome/>}
+    <>
+      <NextSeo
+        title="Archive"
+      />
+      <div className="h-screen flex flex-col">
+        <Header loginPath={loginPath} />
+        <div className="flex-grow px-4 sm:px-8 overflow-y-scroll overflow-x-hidden">
+          {user ? <Home /> : <Welcome/>}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
