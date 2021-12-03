@@ -9,7 +9,7 @@ export default function Home({ loginPath }: InferGetStaticPropsType<typeof getSt
       <NextSeo
         defaultTitle="Spotify Archive"
         titleTemplate="%s | Spotify Archive"
-        description="Spotigfy Discover Weekly Archive."
+        description="Spotifyにログインすれば、Discover Weeklyを自動で保存し続けることができます。"
         canonical="https://spotify-discoverweekly-archive.herokuapp.com/"
       />
       <div className=" bg-gradient-to-t to-gray-900 via-gray-900 from-black  text-white h-screen">
