@@ -5,7 +5,7 @@ import { withSessionRoute } from "@/lib/withSession";
 import { MeApiResponse } from "@/types/api/me";
 
 const me:NextApiHandler<MeApiResponse> = async (req, res) => {
-  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
+  console.log(`API::${req.method}:${req.url} |${req.session.user?.userId}| `,{query:req.query,body:req.body})
   try {
     switch (req.method) {
       case "GET": {
@@ -14,7 +14,8 @@ const me:NextApiHandler<MeApiResponse> = async (req, res) => {
         const spotify = new SpotifyWebApi({ accessToken });
 
         const me = await spotify.users.getMe()
-
+        req.session.user.userId = me.id
+        await req.session.save()
         res.status(200).json({
           code:"200",
           message:"success",

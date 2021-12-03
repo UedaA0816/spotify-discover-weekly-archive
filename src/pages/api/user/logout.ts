@@ -3,7 +3,7 @@ import { withSessionRoute } from "@/lib/withSession";
 import { LogoutApiResponse } from "@/types/api/user/logout";
 
 const logout:NextApiHandler<LogoutApiResponse> = async (req, res) => {
-  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
+  console.log(`API::${req.method}:${req.url} |${req.session.user?.userId}| `,{query:req.query,body:req.body})
   try {
     
     await req.session.destroy();

@@ -67,7 +67,7 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
           await withMongo(async (db) => {
             return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
           })
-
+          console.log(`アーカイブ成功 |${me.id}|${weekDate}|`)
           res.status(200).json({
             code:"200",
             message:"success",
@@ -76,7 +76,7 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
           
         } catch (error) {
           //TODO DB登録処理
-          console.error("DB登録処理失敗",error)
+          console.error(`アーカイブ失敗 |${me.id}|${weekDate}|`,error)
           const history = {
             userId:me.id,
             createdAt:new Date(),
