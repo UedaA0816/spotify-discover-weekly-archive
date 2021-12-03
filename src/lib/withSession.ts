@@ -33,6 +33,7 @@ declare module "iron-session" {
     user?: {
       accessToken:string,
       refreshToken:string,
+      userId?:string,
     };
   }
 }

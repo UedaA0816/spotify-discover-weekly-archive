@@ -6,7 +6,7 @@ import { AuthorizeApiResponse, SpotifyAuthorizeApiResponse } from "@/types/api/a
 
 
 const authorize: NextApiHandler<AuthorizeApiResponse> = async (req, res) => {
-  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
+  console.log(`API::${req.method}:${req.url} |${req.session.user?.userId}| `,{query:req.query,body:req.body})
   try {
     
     const { code, state } = req.query;

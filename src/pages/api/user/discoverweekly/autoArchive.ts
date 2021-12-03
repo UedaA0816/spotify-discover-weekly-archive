@@ -36,7 +36,7 @@ const getPlaylistIdFromUrl = (url:string):string => {
 }
 
 const autoArchive:NextApiHandler<AutoArchiveApiResponse> = async (req, res) => {
-  console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
+  console.log(`API::${req.method}:${req.url} |${req.session.user?.userId}| `,{query:req.query,body:req.body})
   try {
     switch (req.method) {
       case "POST": {
