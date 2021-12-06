@@ -10,29 +10,11 @@ import { AutoArchiveHistory } from '@/types/db/autoArchiveHistory';
 import OutLink from './OutLink';
 
 
-function HistoryList({list}:{list:WithId<AutoArchiveHistory>[]}) {
+function HistoryList({style,list}:{style?:React.CSSProperties,list:WithId<AutoArchiveHistory>[]}) {
   
 
   return (
-    // <table classNameName="w-full">
-    //   <thead>
-    //     <tr>
-    //       <th>week</th>
-    //       <th>result</th>
-    //       <th>id</th>
-    //     </tr>
-    //   </thead>
-    //   <tbody>
-    //     {list.map(v=>(
-    //       <tr key={v._id.toString()} classNameName="overflow-scroll">
-    //         <td>{v.week}</td>
-    //         <td>{v.success ? "成功":"失敗"}</td>
-    //         <td>{v.playlistId}</td>
-    //       </tr>
-    //     ))}
-    //   </tbody>
-    // </table>
-    <table className="table-auto border-collapse w-full">
+    <table className={"table-auto border-collapse w-full "} style={style}>
       <thead>
         <tr className="text-sm font-medium text-gray-700 text-left">
           <th className="px-4 py-2 bg-gray-200 rounded-l-lg" >Id</th>

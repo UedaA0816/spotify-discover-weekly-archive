@@ -28,7 +28,7 @@ const history:NextApiHandler<HistoryApiResponse> = async (req, res) => {
         
         const autoArchiveUser = await withMongo(async (db) => {
               
-          return db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).find({"userId":me.id}).toArray()
+          return db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).find({"userId":me.id}).sort({createdAt:-1}).toArray()
         })
         res.status(200).json({
           code:"200",
