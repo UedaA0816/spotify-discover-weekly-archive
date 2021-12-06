@@ -26,8 +26,8 @@ function History() {
   }, [autoArchiveUser])
 
   return (
-    <div className={"w-[290px] sm:w-[400px] md:w-[500px] transition-opacity "+(disabled ? "opacity-50" : "")}>
-      <h1 className="mb-4 font-bold text-xl tracking-wider">History</h1>
+    <div className={"transition-opacity "+(disabled ? "opacity-50" : "")}>
+      <h1 className="mx-auto mb-4 font-bold text-xl tracking-wider w-[290px] sm:w-[400px] md:w-[500px]">History</h1>
       {(history?.data?.list == null || history.data.list.length === 0) ? <p>no data</p> : <HistoryShowableList list={history.data.list} /> }
     </div>
   );
