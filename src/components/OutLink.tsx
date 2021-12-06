@@ -3,7 +3,7 @@ import React from "react";
 const OutLink:React.FC<{className?:string,href:string,icon?:boolean}> = ({children,className,href,icon})=>{
   
   return(
-    <a className={"hover:text-spotify inline-flex items-center "+className} href={href} rel="noopener noreferrer" target="_blank">{children}{icon && <Icon className="h-3 w-3 ml-1" />}</a>
+    <a className={"hover:text-spotify inline-flex items-center "+(className || "")} href={href} rel="noopener noreferrer" target="_blank">{children}{icon && <Icon className="h-3 w-3 ml-1" />}</a>
   )
 }
 
