@@ -1,6 +1,7 @@
 import { CheckLoginApiResponse } from '@/types/api/auth/checkLogin'
 import { ArchiveApiResponse } from '@/types/api/user/discoverweekly/archive'
 import { AutoArchiveApiResponse } from '@/types/api/user/discoverweekly/autoArchive'
+import { HistoryApiResponse } from '@/types/api/user/discoverweekly/history'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Playlist } from 'spotify-web-api-ts/types/types/SpotifyObjects'
 
@@ -43,9 +44,15 @@ export const spotifyApi = createApi({
       }),
       invalidatesTags:()=>[{type:"AutoArchiveUser"}]
     }),
+    discoverweeklyHistory: builder.query<HistoryApiResponse, void>({
+      query: () => ({
+        url:`user/discoverweekly/history`,
+        method:"POST",
+      }),
+    }),
   }),
 })
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useCheckLoginQuery, useDiscoverweeklyAutoArchiveUserQuery, useDiscoverweeklyAutoArchiveMutation } = spotifyApi
+export const { useCheckLoginQuery, useDiscoverweeklyAutoArchiveUserQuery, useDiscoverweeklyAutoArchiveMutation, useDiscoverweeklyHistoryQuery } = spotifyApi
