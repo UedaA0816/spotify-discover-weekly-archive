@@ -26,7 +26,7 @@ const PendingButton:React.FC<PendingButtonProps> = ({children,onClick,className,
           setIsReadySubmit(false)
         } : () => { if (!disabledReady) setIsReadySubmit(true) }
       }
-      className={" "+className}
+      className={" "+(className || "")}
       disabled={disabled}
     >
       {isReadySubmit ? children :

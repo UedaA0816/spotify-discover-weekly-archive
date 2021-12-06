@@ -2,6 +2,7 @@ import { useCheckLoginQuery } from '@/ducks/api/spotify';
 import React from 'react';
 import Archive from './Archive';
 import Divider from './Divider';
+import History from './History';
 import LoadingSpinner from './LoadingSpinner';
 import Status from './Status';
 
@@ -16,6 +17,8 @@ function Home() {
           <Status />
           <Divider />
           <Archive />
+          <Divider />
+          <History />
         </>
       )}
     </div>
