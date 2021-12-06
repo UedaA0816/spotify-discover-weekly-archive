@@ -22,11 +22,11 @@ function HistoryShowableList({list}:{list:WithId<AutoArchiveHistory>[]}) {
   return (
     <>
       <HistoryList list={isOpen ? list : list.slice(0,SHOWABLE_LIMIT)} style={isOpen ? {}:{"boxShadow":"inset 0 -40px 25px -25px rgba(30, 215, 96,40%)"}}></HistoryList>
-      { isOpen === false &&
-        <div className="text-center mt-4">
-          <SubButton onClick={()=>setIsOpen(true)}>More</SubButton>
-        </div>
-      }
+      
+      <div className="text-center mt-4">
+        <SubButton onClick={()=>setIsOpen(!isOpen)}>{isOpen?"Hide":"Show more"}</SubButton>
+      </div>
+      
     </>
   );
 }
