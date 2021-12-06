@@ -10,12 +10,12 @@ import { AutoArchiveHistory } from '@/types/db/autoArchiveHistory';
 import OutLink from './OutLink';
 
 
-function HistoryList({style,list}:{style?:React.CSSProperties,list:WithId<AutoArchiveHistory>[]}) {
+function HistoryList({style,height="100%",list}:{style?:React.CSSProperties,height?:number|string,list:WithId<AutoArchiveHistory>[]}) {
   
 
   return (
-    <div className="">
-      <table className={"table-auto border-collapse transition-shadow duration-500"} width="100%" style={style}>
+    <div className=" overflow-y-hidden transition-all duration-500" style={{...{height},...style}}>
+      <table className={"table-auto border-collapse"} width="100%">
         <thead>
           <tr className="text-sm font-medium text-gray-700 text-left">
             <th className="px-2 sm:px-4 py-2 bg-gray-200 rounded-l-lg" >Id</th>
