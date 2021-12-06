@@ -25,7 +25,7 @@ function HistoryList({style,list}:{style?:React.CSSProperties,list:WithId<AutoAr
         </thead>
         <tbody className="text-sm font-normal text-gray-100">
           {list.map(v=>(  
-            <tr key={v._id.toString()} className="hover:bg-gray-700 transition-colors border-b border-gray-200 last:border-none py-10">
+            <tr key={v._id.toString()} className="hover:bg-gray-700 transition-colors border-b border-gray-400 last:border-none py-10">
               <td className="px-2 sm:px-4 py-4">{v.playlistId && <OutLink href={"https://open.spotify.com/playlist/"+v.playlistId}>{v.playlistId}</OutLink>}</td>
               <td className="px-2 sm:px-4 py-4">{v.week}</td>
               <td className="px-2 sm:px-4 py-4">{v.success ? "成功" : "失敗"}</td>
