@@ -38,7 +38,7 @@ function Status() {
   const handleArchive = (data:StatusForm) => {
     console.log(data)
     
-    if(!disabled)discoverweeklyAutoArchive({enabled:data.enabled,isNotRegistered:false})
+    if(!disabled)discoverweeklyAutoArchive({enabled:data.enabled})
   } 
 
   return (
