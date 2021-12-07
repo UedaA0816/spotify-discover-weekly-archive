@@ -27,7 +27,7 @@ function Status() {
   useEffect(() => {
     
     const enabled = autoArchiveUser?.data?.table?.enabled
-    console.log({enabled})
+    // console.log({enabled})
     setDisabled(enabled === undefined)
     if(enabled !== undefined){
       setValue("enabled",enabled)
@@ -38,7 +38,7 @@ function Status() {
   const handleArchive = (data:StatusForm) => {
     console.log(data)
     
-    if(!disabled)discoverweeklyAutoArchive({enabled:data.enabled,isNotRegistered:false})
+    if(!disabled)discoverweeklyAutoArchive({enabled:data.enabled})
   } 
 
   return (
