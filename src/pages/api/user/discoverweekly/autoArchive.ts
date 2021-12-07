@@ -4,11 +4,12 @@ import { SpotifyWebApi } from 'spotify-web-api-ts';
 import { withSessionRoute } from "@/lib/withSession";
 import { ArchiveApiResponse } from "@/types/api/user/discoverweekly/archive";
 import { withMongo } from "@/lib/db";
-import { generateRandomString, MONGO_DB_COLLECTION_AUTOARCHIVE } from "@/lib/common";
+import { generateRandomString, getBeginningOfTheWeekDate, MONGO_DB_COLLECTION_AUTOARCHIVE, MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY } from "@/lib/common";
 import { AutoArchiveUser } from "@/types/db/autoArchive";
 import { AutoArchiveApiResponse } from "@/types/api/user/discoverweekly/autoArchive";
 import { WithId } from "mongodb";
 import axios from "axios";
+import { AutoArchiveHistory } from "@/types/db/autoArchiveHistory";
 
 const playlistIdRegex = /^\w{22}$/
 
@@ -50,7 +51,7 @@ const autoArchive:NextApiHandler<AutoArchiveApiResponse> = async (req, res) => {
       }
       case "PUT": {
     
-        const {playlistName,playlistId,playlistIdUrl,enabled,isNotRegistered} = req.body
+        const {playlistName,playlistId,playlistIdUrl,enabled} = req.body
 
         const targetPlaylistName:string = playlistName
         const targetPlaylistId:string = playlistId || (playlistIdUrl && getPlaylistIdFromUrl(playlistIdUrl))
@@ -82,32 +83,75 @@ const autoArchive:NextApiHandler<AutoArchiveApiResponse> = async (req, res) => {
           message:"DB upsert error",
           error:autoArchiveUser.lastErrorObject
         });
-        
-        if(isNotRegistered){
-          const url = new URL(process.env.SPOTIFY_API_REDIRECT_URI)
+
+        const userId = me.id
+        const week = getBeginningOfTheWeekDate(new Date())
+
+        try {
+
+          const existHistory = await withMongo(async (db) => {
+            return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).findOne({userId,week})
+          })
+  
+          if(existHistory) {
+            console.log(`アーカイブ不要 |${userId}|${week}|`)
+            res.status(200).json({
+              code:"200",
+              message:"success",
+              data:{
+                table: autoArchiveUser.value,
+              }
+            });
+          }else{
+            const url = new URL(process.env.SPOTIFY_API_REDIRECT_URI)
+            
+            const archive = await axios.post<ArchiveApiResponse>(`${url.origin}/api/user/discoverweekly/archive`,{
+              playlistId:targetPlaylistId,
+              playlistName:targetPlaylistName,
+              accessToken
+            })
+            const history = {
+              userId:userId,
+              playlistName:archive.data.data.name,
+              playlistId:archive.data.data.id,
+              createdAt:new Date(),
+              success:true,
+              week:week,
+            }
+            await withMongo(async (db) => {
+              return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
+            })
+            console.log(`アーカイブ成功 |${userId}|${week}|`)
+            res.status(200).json({
+              code:"200",
+              message:"success",
+              data:{
+                table: autoArchiveUser.value,
+                playlist:archive.data.data
+              }
+            });
+          }
           
-          const archive = await axios.post<ArchiveApiResponse>(`${url.origin}/api/user/discoverweekly/archive`,{
-            playlistId:targetPlaylistId,
-            playlistName:targetPlaylistName,
-            accessToken
+        } catch (error) {
+          //TODO DB登録処理
+          console.error(`アーカイブ失敗 |${userId}|${week}|`,error)
+          const history = {
+            userId:userId,
+            createdAt:new Date(),
+            success:false,
+            week:week,
+          }
+          await withMongo(async (db) => {
+            return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
           })
           res.status(200).json({
             code:"200",
             message:"success",
             data:{
-             table: autoArchiveUser.value,
-             playlist:archive.data.data
+              table: autoArchiveUser.value,
             }
           });
-        }else{
-          res.status(200).json({
-            code:"200",
-            message:"success",
-            data:{
-             table: autoArchiveUser.value,
-            }
-          });
-        }
+        }          
         break;
       }
       default:
