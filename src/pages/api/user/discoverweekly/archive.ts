@@ -39,18 +39,6 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
           const playlist = await spotify.playlists.createPlaylist(me.id,targetPlaylistName)
           const addPlaylist = await spotify.playlists.addItemsToPlaylist(playlist.id,discoverweeklyPlaylist.items.map(v=>v.track.uri))
 
-          const history = {
-            userId:me.id,
-            playlistName:playlist.name,
-            playlistId:playlist.id,
-            createdAt:new Date(),
-            success:true,
-            week:weekDate,
-          }
-          await withMongo(async (db) => {
-            return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
-          })
-          console.log(`アーカイブ成功 |${me.id}|${weekDate}|`)
           res.status(200).json({
             code:"200",
             message:"success",
@@ -58,17 +46,7 @@ const archive:NextApiHandler<ArchiveApiResponse> = async (req, res) => {
           });
           
         } catch (error) {
-          //TODO DB登録処理
-          console.error(`アーカイブ失敗 |${me.id}|${weekDate}|`,error)
-          const history = {
-            userId:me.id,
-            createdAt:new Date(),
-            success:false,
-            week:weekDate,
-          }
-          await withMongo(async (db) => {
-            return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
-          })
+          
           res.status(500).send({
             code:"500",
             message:error.message,

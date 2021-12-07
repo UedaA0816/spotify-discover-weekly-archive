@@ -47,15 +47,17 @@ const autoArchiveBatch:NextApiHandler = async (req, res) => {
             const spotify = new SpotifyWebApi({clientId,clientSecret});
   
             for await (const user of autoArchiveUsers) {
+              const {userId} = user
               try {
 
-                const {userId} = user
-
-                const history = await withMongo(async (db) => {
+                const existHistory = await withMongo(async (db) => {
                   return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).findOne({userId,week})
                 })
 
-                if(history) return console.log(`アーカイブ不要 |${userId}|${week}|`)
+                if(existHistory) {
+                  console.log(`アーカイブ不要 |${userId}|${week}|`)
+                  continue
+                }
                 
                 const url = new URL(process.env.SPOTIFY_API_REDIRECT_URI)
 
@@ -69,8 +71,31 @@ const autoArchiveBatch:NextApiHandler = async (req, res) => {
                   accessToken:response.access_token
                 })
 
+                const history = {
+                  userId:userId,
+                  playlistName:archive.data.data.name,
+                  playlistId:archive.data.data.id,
+                  createdAt:new Date(),
+                  success:true,
+                  week:week,
+                }
+                await withMongo(async (db) => {
+                  return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
+                })
+                console.log(`アーカイブ成功 |${userId}|${week}|`)
+
               } catch (error) {
-                console.error(error)
+                //TODO DB登録処理
+                console.error(`アーカイブ失敗 |${userId}|${week}|`,error)
+                const history = {
+                  userId:userId,
+                  createdAt:new Date(),
+                  success:false,
+                  week:week,
+                }
+                await withMongo(async (db) => {
+                  return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).insertOne(history)
+                })
               }
             }
 
