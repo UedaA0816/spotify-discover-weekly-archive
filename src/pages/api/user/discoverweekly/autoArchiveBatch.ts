@@ -4,12 +4,13 @@ import { SpotifyWebApi } from 'spotify-web-api-ts';
 import { withSessionRoute } from "@/lib/withSession";
 import { ArchiveApiResponse } from "@/types/api/user/discoverweekly/archive";
 import { withMongo } from "@/lib/db";
-import { generateRandomString, MONGO_DB_COLLECTION_AUTOARCHIVE, MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY } from "@/lib/common";
+import { generateRandomString, getBeginningOfTheWeekDate, MONGO_DB_COLLECTION_AUTOARCHIVE, MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY } from "@/lib/common";
 import { AutoArchiveUser } from "@/types/db/autoArchive";
 import { AutoArchiveApiResponse } from "@/types/api/user/discoverweekly/autoArchive";
 import { WithId } from "mongodb";
 import axios from "axios";
 import { AutoArchiveHistory } from "@/types/db/autoArchiveHistory";
+
 
 const autoArchiveBatch:NextApiHandler = async (req, res) => {
   console.log(`API::${req.method}:${req.url}`,{query:req.query,body:req.body})
@@ -34,6 +35,8 @@ const autoArchiveBatch:NextApiHandler = async (req, res) => {
 
           let hasNext = false
 
+          const week = getBeginningOfTheWeekDate(new Date())
+
           do {
             
             const autoArchiveUsers = await withMongo(async (db) => {
@@ -45,6 +48,14 @@ const autoArchiveBatch:NextApiHandler = async (req, res) => {
   
             for await (const user of autoArchiveUsers) {
               try {
+
+                const {userId} = user
+
+                const history = await withMongo(async (db) => {
+                  return await db.collection<AutoArchiveHistory>(MONGO_DB_COLLECTION_AUTOARCHIVEHISTORY).findOne({userId,week})
+                })
+
+                if(history) return console.log(`アーカイブ不要 |${userId}|${week}|`)
                 
                 const url = new URL(process.env.SPOTIFY_API_REDIRECT_URI)
 
