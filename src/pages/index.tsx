@@ -2,8 +2,10 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
 import Main from '@/components/Main'
 import { NextSeo } from 'next-seo';
+import { useWindowSize } from '@/lib/hook/useWindowSize';
 
 export default function Home({ loginPath }: InferGetStaticPropsType<typeof getStaticProps>) {
+  const {height} = useWindowSize()
   return (
     <>
       <NextSeo
@@ -12,7 +14,7 @@ export default function Home({ loginPath }: InferGetStaticPropsType<typeof getSt
         description="Spotifyにログインすれば、Discover Weeklyを自動で保存し続けることができます。"
         canonical="https://spotify-discoverweekly-archive.herokuapp.com/"
       />
-      <div className=" bg-gradient-to-t to-gray-900 via-gray-900 from-black  text-white h-screen">
+      <div className=" bg-gradient-to-t to-gray-900 via-gray-900 from-black  text-white" style={{height:height == null ? "100vh":`${height}px`}}>
         <Main loginPath={loginPath}/>
       </div>
     </>
