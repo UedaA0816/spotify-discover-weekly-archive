@@ -46,7 +46,7 @@ function Main({loginPath}:{loginPath:string}) {
       <NextSeo
         title="Archive"
       />
-      <div className="h-screen flex flex-col">
+      <div className="h-full flex flex-col">
         <Header loginPath={loginPath} />
         <div className="flex-grow px-4 sm:px-8 overflow-y-scroll overflow-x-hidden">
           {user ? <Home /> : <Welcome/>}
