@@ -9,8 +9,8 @@ export default function Home({ loginPath }: InferGetStaticPropsType<typeof getSt
   return (
     <>
       <NextSeo
-        defaultTitle="Spotify Archive"
-        titleTemplate="%s | Spotify Archive"
+        defaultTitle="Discover Weekly Archive"
+        titleTemplate="%s | Discover Weekly Archive"
         description="Spotifyにログインすれば、Discover Weeklyを自動で保存し続けることができます。"
         canonical="https://spotify-discoverweekly-archive.herokuapp.com/"
       />
@@ -22,7 +22,7 @@ export default function Home({ loginPath }: InferGetStaticPropsType<typeof getSt
 }
 
 export const getStaticProps: GetStaticProps<{loginPath:string}> = async () => {
-  const scopes = ['user-read-email', 'user-read-private', 'playlist-modify-public', 'playlist-modify-private'];
+  const scopes = ['playlist-modify-public', 'playlist-modify-private'];
   const params = new URLSearchParams();
   params.append('client_id', process.env.SPOTIFY_API_CLIENT_ID);
   params.append('response_type', 'code');
